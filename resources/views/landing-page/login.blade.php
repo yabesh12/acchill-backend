@@ -91,9 +91,7 @@
                                         <a href="{{route('user.register')}}" class="ms-1 btn-link align-baseline text-capitalize">{{__('auth.signup')}}</a>
                                     </div>
 
-                                    <div class="text-center">
-                                        <a href="{{route('auth.register')}}" class="btn-link p-0 text-capitalize">{{__('landingpage.handyman_provider_register')}}</a>
-                                    </div>
+                                    <!-- Provider register link removed for UX Serve -->
                                     <div class="mt-5">
                                         {{-- <h6 class="mb-3 text-capitalize text-center">{{__('landingpage.demo_accounts')}}</h6> --}}
                                         {{--  <div class="px-5 py-3 bg-primary">

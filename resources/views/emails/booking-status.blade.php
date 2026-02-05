@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Status Update - AC Chill</title>
+    <title>Booking Status Update - UX Serve</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -152,7 +152,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>AC Chill</h1>
+            <h1>UX Serve</h1>
             <p>Cool Comfort at Your Doorstep</p>
         </div>
 
@@ -226,7 +226,7 @@
             </div>
             @elseif($status == 'completed')
             <div class="info-box">
-                <strong>Service Completed!</strong> Thank you for choosing AC Chill. We hope you're satisfied with our service.
+                <strong>Service Completed!</strong> Thank you for choosing UX Serve. We hope you're satisfied with our service.
             </div>
             @endif
         </div>
@@ -234,7 +234,7 @@
         <div class="footer">
             <p>If you have any questions, please contact us.</p>
             <p>Email: <a href="mailto:support@acchill.com">support@acchill.com</a></p>
-            <p>&copy; {{ date('Y') }} AC Chill. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} UX Serve. All rights reserved.</p>
         </div>
     </div>
 </body>

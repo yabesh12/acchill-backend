@@ -1,0 +1,339 @@
+/* ============================================
+   AC CHILL - Custom Theme Overrides
+   Professional AC Service - Chennai, South India
+   ============================================ */
+
+/* ---- Primary Color Theme ---- */
+:root {
+  --bs-primary: #0288D1 !important;
+  --bs-primary-rgb: 2, 136, 209 !important;
+  --ux-serve-dark: #01579B;
+  --ux-serve-light: #B3E5FC;
+  --ux-serve-accent: #00BCD4;
+  --ux-serve-gradient: linear-gradient(135deg, #0288D1 0%, #00BCD4 100%);
+}
+
+/* ---- Hero Banner ---- */
+.padding-top-bottom-90.bg-light {
+  background: linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 40%, #E0F7FA 100%) !important;
+  padding: 80px 0 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.padding-top-bottom-90.bg-light::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(2,136,209,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.padding-top-bottom-90.bg-light::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0,188,212,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.padding-top-bottom-90 h2 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #01579B;
+  line-height: 1.2;
+}
+
+.padding-top-bottom-90 .iq-title-desc {
+  font-size: 1.1rem;
+  color: #546E7A;
+  max-width: 540px;
+}
+
+/* ---- Section Headers ---- */
+.iq-title-box h3 {
+  color: #01579B;
+  font-weight: 700;
+}
+
+.highlighted-text svg path {
+  stroke: #00BCD4 !important;
+}
+
+/* ---- Navigation ---- */
+.top-header.bg-primary {
+  background: linear-gradient(90deg, #01579B 0%, #0288D1 100%) !important;
+}
+
+.iq-navbar {
+  box-shadow: 0 2px 20px rgba(2, 136, 209, 0.08);
+}
+
+.iq-navbar .nav-link:hover {
+  color: #0288D1 !important;
+}
+
+/* ---- Service Cards ---- */
+.section-padding.bg-light.our-service {
+  background: linear-gradient(180deg, #FAFAFA 0%, #F5F5F5 100%) !important;
+}
+
+/* ---- Provider/Contact Section ---- */
+.bg-primary-subtle {
+  background: linear-gradient(135deg, #E1F5FE 0%, #E0F7FA 100%) !important;
+  padding: 100px 0 !important;
+}
+
+.provider-section h2 {
+  color: #01579B;
+  font-weight: 800;
+}
+
+.provider-section .bg-primary {
+  background: linear-gradient(135deg, #0288D1 0%, #00BCD4 100%) !important;
+  border-radius: 12px !important;
+  transition: transform 0.3s ease;
+}
+
+.provider-section .bg-primary:hover {
+  transform: translateY(-2px);
+}
+
+/* ---- Testimonials ---- */
+.section-padding.bg-light.px-0 {
+  background: linear-gradient(180deg, #F5F5F5 0%, #FAFAFA 100%) !important;
+}
+
+/* ---- App Download Section ---- */
+.bg-primary.rounded-3 {
+  background: linear-gradient(135deg, #0288D1 0%, #01579B 50%, #00BCD4 100%) !important;
+}
+
+/* ---- Features Section ---- */
+.icon-box-wrapper .icon-box-number {
+  background: linear-gradient(135deg, #0288D1, #00BCD4) !important;
+  color: white !important;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.border-bottom {
+  border-color: #E1F5FE !important;
+}
+
+/* ---- Buttons ---- */
+.btn-primary {
+  background: linear-gradient(135deg, #0288D1 0%, #0277BD 100%) !important;
+  border-color: #0288D1 !important;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #01579B 0%, #0288D1 100%) !important;
+  border-color: #01579B !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(2, 136, 209, 0.3);
+}
+
+.btn-outline-primary {
+  border-color: #0288D1 !important;
+  color: #0288D1 !important;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  background: #0288D1 !important;
+  color: white !important;
+}
+
+/* ---- Footer ---- */
+.footer {
+  background: linear-gradient(180deg, #0D1B2A 0%, #1B2838 100%) !important;
+}
+
+.footer .footer-top {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+
+.footer a:hover {
+  color: #4FC3F7 !important;
+}
+
+.footer .text-primary {
+  color: #4FC3F7 !important;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 0;
+}
+
+/* ---- Login Page ---- */
+.authontication-forms h4 {
+  color: #01579B;
+  font-weight: 700;
+}
+
+.custom-form-field label {
+  color: #546E7A;
+  font-weight: 500;
+}
+
+.custom-form-field .form-control:focus {
+  border-color: #0288D1;
+  box-shadow: 0 0 0 0.2rem rgba(2, 136, 209, 0.15);
+}
+
+/* ---- Category Cards ---- */
+.category-card {
+  border-radius: 16px !important;
+  transition: all 0.3s ease;
+  border: 1px solid #E1F5FE;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(2, 136, 209, 0.12);
+  border-color: #0288D1;
+}
+
+/* ---- Service Cards Enhanced ---- */
+.card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* ---- Breadcrumb ---- */
+.breadcrumb-item a {
+  color: #0288D1;
+}
+
+.breadcrumb-item.active {
+  color: #546E7A;
+}
+
+/* ---- Rating Stars ---- */
+.star-rating svg {
+  color: #FFA726;
+}
+
+/* ---- Search Box ---- */
+.search-box input,
+.location-search input {
+  border-radius: 12px !important;
+  border: 2px solid #E1F5FE !important;
+  padding: 12px 20px !important;
+}
+
+.search-box input:focus,
+.location-search input:focus {
+  border-color: #0288D1 !important;
+  box-shadow: 0 0 0 3px rgba(2, 136, 209, 0.1) !important;
+}
+
+/* ---- Animations ---- */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.provider-1, .provider-3, .provider-5 {
+  animation: float 4s ease-in-out infinite;
+}
+
+.provider-4, .provider-6 {
+  animation: float 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0288D1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #01579B;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 991px) {
+  .padding-top-bottom-90 h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .padding-top-bottom-90 h2 {
+    font-size: 1.6rem;
+  }
+  
+  .padding-top-bottom-90.bg-light {
+    padding: 50px 0 !important;
+  }
+}
+
+/* ---- Admin Panel Branding ---- */
+.navbar-brand .logo-title {
+  color: #0288D1 !important;
+  font-weight: 700;
+}
+
+
+
+
+/* ============================================
+   UX Serve Customizations  
+   ============================================ */
+
+/* Hide provider dropdown on service list page */
+.col-sm-4:has(#providerDropdown) {
+    display: none !important;
+}
+.ux-serve-hidden {
+    display: none !important;
+}
+
+/* Fix header logo size */
+.navbar-brand img {
+    height: 45px !important;
+    max-height: 45px !important;
+    object-fit: contain !important;
+    border-radius: 8px !important;
+}
+
+/* Fix footer logo */
+footer .d-flex img {
+    height: 40px !important;
+    max-height: 40px !important;
+    object-fit: contain !important;
+    border-radius: 8px !important;
+}

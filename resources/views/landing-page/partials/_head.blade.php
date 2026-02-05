@@ -1,13 +1,15 @@
 <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>{{env('APP_NAME')}} Service - On-Demand Home Service Flutter App with Complete Solution</title>
+<title>UX Serve - Professional AC Service & Maintenance in Chennai</title>
 <link rel="shortcut icon" class="favicon_preview" href="{{ getSingleMedia(imageSession('get'),'favicon',null) }}" />
 <link rel="stylesheet" href="{{ asset('css/landing-page.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/landing-page-rtl.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/landing-page.min.css') }}">
 <link rel="stylesheet" href="{{ asset('css/landing-page-custom.min.css') }}">
 <link rel="stylesheet" href="{{ asset('vendor/@fortawesome/fontawesome-free/css/all.min.css')}}">
+<link rel="stylesheet" href="{{ asset('css/ac-chill-theme.css') }}">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <meta name="assert_url" content="{{ URL::to('') }}" />

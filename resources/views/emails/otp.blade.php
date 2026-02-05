@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $type === 'email_verification' ? 'Email Verification' : 'Password Reset' }} OTP - AC Chill</title>
+    <title>{{ $type === 'email_verification' ? 'Email Verification' : 'Password Reset' }} OTP - UX Serve</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -109,7 +109,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>AC Chill</h1>
+            <h1>UX Serve</h1>
             <p>Cool Comfort at Your Doorstep</p>
         </div>
 
@@ -118,12 +118,12 @@
 
             @if($type === 'email_verification')
                 <p class="message">
-                    Thank you for registering with <span class="brand">AC Chill</span>!
+                    Thank you for registering with <span class="brand">UX Serve</span>!
                     To complete your registration, please verify your email address using the OTP below.
                 </p>
             @else
                 <p class="message">
-                    We received a request to reset your password for your <span class="brand">AC Chill</span> account.
+                    We received a request to reset your password for your <span class="brand">UX Serve</span> account.
                     Use the OTP below to proceed with the password reset.
                 </p>
             @endif
@@ -137,14 +137,14 @@
 
             <div class="warning">
                 <strong>Security Notice:</strong> Never share this OTP with anyone.
-                AC Chill team will never ask for your OTP via phone or email.
+                UX Serve team will never ask for your OTP via phone or email.
             </div>
         </div>
 
         <div class="footer">
             <p>If you didn't request this, please ignore this email.</p>
             <p>Need help? Contact us at <a href="mailto:support@acchill.com">support@acchill.com</a></p>
-            <p>&copy; {{ date('Y') }} AC Chill. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} UX Serve. All rights reserved.</p>
         </div>
     </div>
 </body>

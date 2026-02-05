@@ -243,3 +243,11 @@ function Tabslider() {
   }
 }
 </script> --}}
+
+<script>
+// UX Serve - Hide provider dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    var pd = document.getElementById('providerDropdown');
+    if (pd) { var p = pd.closest('.col-sm-4'); if (p) p.style.display = 'none'; }
+});
+</script>

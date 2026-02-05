@@ -1,44 +1,44 @@
 {
     "sectione":{
-        "title":"A whole world of services at your door step",
-        "sub_title" :"The best for every budget",
-        "text":"The best for every budget Amet minim mollit n deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.",
+        "title":"Professional AC Services at Your Doorstep",
+        "sub_title":"Expert AC Care for Every Home",
+        "text":"From installation to repair, gas refill to annual maintenance - UX Serve provides comprehensive air conditioning services across Chennai. Our certified technicians ensure your comfort all year round.",
         "image_one": "about-1.png",
         "image_two": "about-2.png",
-        "card" :{
-            "counter": "1548",
-            "text":"Gave Services Across The Cities And World"
+        "card":{
+            "counter": "2500",
+            "text":"AC Services Completed Across Chennai"
         }
     },
     "sectionTwo":{
-        "title" : "Experience in Number",
-        "text" : "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less rmal distribution of letters.",
+        "title": "Trusted by Chennai Residents",
+        "text": "UX Serve has been serving the Chennai community with reliable and affordable AC services. Our skilled technicians are trained to handle all major AC brands and provide quick, efficient service.",
         "card":{
-            "count1" :"250+",
-            "value1" :"Authorized Team",
-            "count2" :"90+",
-            "value2" :"Service Cities",
-            "count3" :"1400+",
-            "value3" :"Happy Customers"
+            "count1": "50+",
+            "value1": "Expert Technicians",
+            "count2": "25+",
+            "value2": "Areas in Chennai",
+            "count3": "2500+",
+            "value3": "Happy Customers"
         },
         "goal_to_achieve":{
-            "title":"Goal to Achieve",
-            "text":"Amet minim mollit n deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.",
+            "title":"Our Promise",
+            "text":"We are committed to providing the best AC service experience in Chennai with transparent pricing and professional service.",
             "checklist":[
-                "Amet minim mollit n deserunt",
-                "Amet minim mollit n deserunt",
-                "Amet minim mollit n deserunt"
+                "Same-day AC repair and maintenance",
+                "Certified and experienced technicians",
+                "Transparent pricing with no hidden charges"
             ],
-            "image" : "about-bg.png"
+            "image": "about-bg.png"
         }
     },
     "sectionFour":{
-        "title":"Meet Our leaders",
-        "text": "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+        "title":"Our Expert Team",
+        "text": "Meet the skilled professionals who keep Chennai cool. Our technicians are factory-trained and certified for all major AC brands."
     },
     "sectionSix":{
-        "title": "Subscribe to our newsletter",
-        "text" : "Subscribe to the newsletter to receive exclusive offers, latest news, and updates",
-        "buttontext" : "Subscribe"
+        "title": "Stay Cool with UX Serve",
+        "text": "Subscribe for exclusive AC maintenance tips, seasonal offers, and service reminders",
+        "buttontext": "Subscribe"
     }
 }

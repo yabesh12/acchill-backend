@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="50" viewBox="0 0 180 50">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0288D1"/>
+      <stop offset="100%" style="stop-color:#00BCD4"/>
+    </linearGradient>
+  </defs>
+  <circle cx="25" cy="25" r="22" fill="url(#logoGrad)"/>
+  <g stroke="white" stroke-width="2.5" stroke-linecap="round">
+    <line x1="25" y1="8" x2="25" y2="42"/>
+    <line x1="8" y1="25" x2="42" y2="25"/>
+    <line x1="13" y1="13" x2="37" y2="37"/>
+    <line x1="37" y1="13" x2="13" y2="37"/>
+    <circle cx="25" cy="25" r="5" fill="none"/>
+  </g>
+  <text x="55" y="22" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#01579B">AC</text>
+  <text x="82" y="22" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#0288D1">CHILL</text>
+  <text x="55" y="40" font-family="Inter, Arial, sans-serif" font-size="9" font-weight="400" fill="#78909C" letter-spacing="1.5">COOL COMFORT</text>
+</svg>
