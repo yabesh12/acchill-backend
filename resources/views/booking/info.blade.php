@@ -164,10 +164,18 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                             {{ optional($bookingdata->customer)->email ?? '-' }}
                                         </a>
                                     </li> -->
-                                    <li class="d-flex align-items-center">
+                                    <li class="d-flex align-items-center mb-2">
                                         <i class="ri-map-pin-line me-2"></i>
                                         <span class="text-wrap">{{ optional($bookingdata->customer)->address ?? '-' }}</span>
                                     </li>
+                                    @if($bookingdata->phone_number)
+                                    <li class="d-flex align-items-center">
+                                        <i class="ri-smartphone-line me-2"></i>
+                                        <a href="tel:{{ $bookingdata->phone_number }}" class="text-body">
+                                            <strong>Booking Mobile:</strong> {{ $bookingdata->phone_number }}
+                                        </a>
+                                    </li>
+                                    @endif
                                 </ul>
                             </div>
                     </div>

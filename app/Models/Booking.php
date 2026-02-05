@@ -40,7 +40,8 @@ class Booking extends Model
         'final_coupon_discount_amount',
         'cancellation_charge',
         'cancellation_charge_amount',
-    
+        'phone_number',
+
     ];
 
     protected $casts = [
