@@ -66,7 +66,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_status')}}</p>
                                         @hasanyrole('admin|demo_admin')
-                                        <select class="form-select bookingstatus" data-id="{{ $bookingdata->id }}">
+                                        <select class="form-select form-select-sm bookingstatus" style="width:auto; font-weight:600; color:#0d6efd; border-color:#0d6efd;" data-id="{{ $bookingdata->id }}">
                                             @foreach(App\Models\BookingStatus::whereIn('value', ['pending', 'accept', 'completed', 'cancelled'])->get() as $status)
                                                 <option value="{{ $status->value }}" {{ $bookingdata->status == $status->value ? 'selected' : '' }}>{{ $status->label }}</option>
                                             @endforeach
@@ -98,7 +98,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{ __('messages.payment_status') }}</p>
                                         @hasanyrole('admin|demo_admin')
-                                        <select class="form-select paymentStatus" data-id="{{ $bookingdata->id }}">
+                                        <select class="form-select form-select-sm paymentStatus" style="width:auto; font-weight:600;" data-id="{{ $bookingdata->id }}">
                                             <option value="pending" {{ (isset($payment) && $payment->payment_status == 'pending') ? 'selected' : '' }}>Pending</option>
                                             <option value="paid" {{ (isset($payment) && $payment->payment_status == 'paid') ? 'selected' : '' }}>Paid</option>
                                         </select>
