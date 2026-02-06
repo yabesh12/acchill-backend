@@ -258,6 +258,10 @@ class BookingController extends Controller
             ->editColumn('total_amount', function ($query) {
                 return $query->total_amount ? getPriceFormat($query->total_amount) : '-';
             })
+            // AC Chill - Add phone number column
+            ->addColumn('phone_number', function ($query) {
+                return $query->phone_number ? $query->phone_number : '-';
+            })
 
             ->addColumn('action', function ($booking) {
                 return view('booking.action', compact('booking'))->render();

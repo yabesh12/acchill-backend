@@ -405,6 +405,11 @@
                         name: 'customer_id',
                         title: "{{ __('messages.user') }}"
                     },
+                    {
+                        data: 'phone_number',
+                        name: 'phone_number',
+                        title: "{{ __('messages.contact_number') }}"
+                    },
                     @if (!auth()->user()->hasAnyRole(['provider']))
                         {
                             data: 'provider_id',
