@@ -1040,17 +1040,41 @@ class BookingController extends Controller
 
     public function updateStatus(Request $request)
     {
-
         switch ($request->type) {
             case 'payment':
-                $data = Payment::where('booking_id', $request->bookingId)->update(['payment_status' => $request->status]);
+                $payment = Payment::where('booking_id', $request->bookingId)->first();
+                if (!$payment) {
+                    $booking = Booking::find($request->bookingId);
+                    Payment::create([
+                        'booking_id' => $request->bookingId,
+                        'customer_id' => $booking->customer_id,
+                        'payment_status' => $request->status,
+                        'payment_type' => 'cash',
+                        'total_amount' => $booking->total_amount ?? 0,
+                    ]);
+                } else {
+                    $payment->update(['payment_status' => $request->status]);
+                }
                 break;
             default:
-
-                $data = Booking::find($request->bookingId)->update(['status' => $request->status]);
+                Booking::find($request->bookingId)->update(['status' => $request->status]);
+                if ($request->status == 'completed') {
+                    $payment = Payment::where('booking_id', $request->bookingId)->first();
+                    if (!$payment) {
+                        $booking = Booking::find($request->bookingId);
+                        Payment::create([
+                            'booking_id' => $request->bookingId,
+                            'customer_id' => $booking->customer_id,
+                            'payment_status' => 'paid',
+                            'payment_type' => 'cash',
+                            'total_amount' => $booking->total_amount ?? 0,
+                        ]);
+                    } else {
+                        $payment->update(['payment_status' => 'paid']);
+                    }
+                }
                 break;
         }
-
         return comman_custom_response(['message' => 'Status Updated', 'status' => true]);
     }
 

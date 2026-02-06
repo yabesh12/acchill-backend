@@ -124,17 +124,6 @@
                 </select>
             </div>
             @endif
-            @if (!auth()->user()->hasAnyRole(['provider','handyman']))
-            <div class="form-group datatable-filter">
-                <label class="form-label" for="provider_id">{{ __('messages.provider_label') }}</label>
-                <select name="provider_name[]" id="provider_id" class="form-control select2" data-filter="select" multiple
-                    data-ajax--url="{{ route('ajax-list', ['type' => 'provider']) }}" data-ajax--cache="true"
-                    data-placeholder="{{ __('messages.all_providers') }}">
-                    <!-- <option value="">{{ __('messages.all_providers') }}</option> -->
-
-                </select>
-            </div>
-            @endif
             @if (!auth()->user()->hasAnyRole(['handyman']))
             <div class="form-group datatable-filter">
                 <label class="form-label" for="handyman_name">{{ __('messages.handyman_label') }}</label>
@@ -336,6 +325,8 @@
         };
         document.addEventListener('DOMContentLoaded', (event) => {
 
+
+
             window.renderedDataTable = $('#datatable').DataTable({
                 // processing: true,
                 serverSide: true,
@@ -410,13 +401,7 @@
                         name: 'phone_number',
                         title: "{{ __('messages.contact_number') }}"
                     },
-                    @if (!auth()->user()->hasAnyRole(['provider']))
-                        {
-                            data: 'provider_id',
-                            name: 'provider_id',
-                            title: "{{ __('messages.provider') }}"
-                        },
-                    @endif {
+                    {
                         data: 'status',
                         name: 'status',
                         title: "{{ __('messages.status') }}"
@@ -823,4 +808,52 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
+<script>
+$(document).on("change", ".booking-status-dropdown", function() {
+    var bookingId = $(this).data("id");
+    var status = $(this).val();
+    $.ajax({
+        url: "{{ route('bookingStatus.update') }}",
+        type: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            bookingId: bookingId,
+            status: status
+        },
+        success: function(response) {
+            $('#datatable').DataTable().ajax.reload(null, false);
+        }
+    });
+});
+$(document).on("change", ".payment-status-dropdown", function() {
+    var bookingId = $(this).data("id");
+    var status = $(this).val();
+    $.ajax({
+        url: "{{ route('bookingStatus.update') }}",
+        type: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            bookingId: bookingId,
+            status: status,
+            type: "payment"
+        },
+        success: function(response) {
+            $('#datatable').DataTable().ajax.reload(null, false);
+        }
+    });
+});
+// Auto-reload when coming back from detail page
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted || localStorage.getItem("bookingStatusChanged") === "true") {
+        localStorage.removeItem("bookingStatusChanged");
+        location.reload();
+    }
+});
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "visible" && localStorage.getItem("bookingStatusChanged") === "true") {
+        localStorage.removeItem("bookingStatusChanged");
+        location.reload();
+    }
+});
+</script>
 </x-master-layout>
