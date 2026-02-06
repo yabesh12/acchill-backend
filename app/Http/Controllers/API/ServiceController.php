@@ -195,7 +195,7 @@ class ServiceController extends Controller
 
 
         $service_detail = new ServiceDetailResource($service);
-        $related = $service->where('service_type','service')->where('category_id',$service->category_id);
+        $related = $service->where('service_type','service')->where('category_id',$service->category_id)->where('status', 1);
          if(default_earning_type() === 'subscription'){
     
             $related->whereHas('providers', function ($a) use ($request) {
