@@ -18,7 +18,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                 <div class="w3-third">
                                     @if($bookingdata->handymanAdded->count() == 0 && $bookingdata->status !== "cancelled")
                                         @hasanyrole('admin|demo_admin|provider')
-                                        <button class="float-end btn btn-primary" id="assign-provider" style="display:none;" data-id="{{ $bookingdata->id }}" data-handyman-id="{{ $bookingdata->provider_id }}">
+                                        <button class="float-end btn btn-primary" id="assign-provider" data-id="{{ $bookingdata->id }}" data-handyman-id="{{ $bookingdata->provider_id }}">
                                             <i class="lab la-telegram-plane"></i>
                                             {{ __('messages.assign_provider') }}
                                         </button>
@@ -180,7 +180,6 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                             </div>
                     </div>
                 </div>
-                <!-- UX Serve - Provider section hidden
                 <!-- Provider Information -->
                 <div class="col-md-4">
                     <div class="card">
@@ -225,7 +224,6 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                         </div>
                     </div>
                 </div>
-                -->
                 <!-- Handyman Information -->
                 <div class="col-md-4">
                     <div class="card">
