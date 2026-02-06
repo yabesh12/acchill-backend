@@ -65,7 +65,15 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_status')}}</p>
+                                        @hasanyrole('admin|demo_admin')
+                                        <select class="form-select bookingstatus" data-id="{{ $bookingdata->id }}">
+                                            @foreach(App\Models\BookingStatus::where('status', 1)->get() as $status)
+                                                <option value="{{ $status->value }}" {{ $bookingdata->status == $status->value ? 'selected' : '' }}>{{ $status->label }}</option>
+                                            @endforeach
+                                        </select>
+                                        @else
                                         <p class="mb-0 text-primary" id="booking_status__span">{{ App\Models\BookingStatus::bookingStatus($bookingdata->status)}}</p>
+                                        @endhasanyrole
                                     </div>
                                 </div>
                             </div>
