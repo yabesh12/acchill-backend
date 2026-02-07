@@ -15,6 +15,16 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                 <h3 class="mb-2 text-primary">{{__('messages.book_id')}} {{ '#' . $bookingdata->id ?? '-'}}</h3>
                             </div>
                             <div class="d-flex flex-wrap flex-xxl-nowrap gap-3">
+                                <div class="w3-third">
+                                    @if($bookingdata->handymanAdded->count() == 0 && $bookingdata->status !== "cancelled")
+                                        @hasanyrole('admin|demo_admin|provider')
+                                        <button class="float-end btn btn-primary" id="assign-provider" style="display:none;" data-id="{{ $bookingdata->id }}" data-handyman-id="{{ $bookingdata->provider_id }}">
+                                            <i class="lab la-telegram-plane"></i>
+                                            {{ __('messages.assign_provider') }}
+                                        </button>
+                                        @endhasanyrole
+                                    @endif
+                                </div>
                                     <div class="w3-third">
                                         @if($bookingdata->handymanAdded->count() == 0 && $bookingdata->status !== "cancelled")
                                             @hasanyrole('admin|demo_admin|provider')
@@ -43,7 +53,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" >
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_date')}}</p>
@@ -51,7 +61,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" >
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_status')}}</p>
@@ -67,7 +77,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" >
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.total_amount')}}</p>
@@ -75,7 +85,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" >
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.payment_method')}}</p>
@@ -83,7 +93,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" >
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{ __('messages.payment_status') }}</p>
@@ -116,7 +126,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                             
                             <!-- Add Cancellation Reason Card -->
                             @if($bookingdata->status === 'cancelled')
-                            <div class="col-md-4" >
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{ __('landingpage.cancel_reason') }}</p>
@@ -134,7 +144,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
 
             <!-- Order information section  -->
             <div class="row">
-                <div class="col-md-4" >
+                <div class="col-md-4" style="display:none;">
                     <div class="card">
                         <div class="card-body">
                         <div class="d-flex align-items-start gap-3">
@@ -187,7 +197,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                 </div>
                 <!-- UX Serve - Provider section hidden -->
                 <!-- Provider Information
-                <div class="col-md-4" >
+                <div class="col-md-4" style="display:none;">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-start gap-3">
@@ -230,9 +240,8 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                         </div>
                     </div>
                 </div>
-                -->
                 <!-- Handyman Information -->
-                <div class="col-md-4" >
+                <div class="col-md-4" style="display:none;">
                     <div class="card">
                                 @if(count($bookingdata->handymanAdded) > 0)
                                     @foreach($bookingdata->handymanAdded as $booking)
@@ -279,7 +288,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
         </div>  
 
         <!-- billing section -->
-        <div class="col-md-4" >
+        <div class="col-md-4" style="display:none;">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -505,12 +514,10 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                 dataType: "json",
                 url: "{{ route('bookingStatus.update') }}",
                 data: {
-                    '_token': '{{ csrf_token() }}',
                     'status': status,
                     'bookingId': id
                 },
                 success: function(data) {
-                    localStorage.setItem('bookingStatusChanged', 'true');
                     // Handle success response
                 }
             });
@@ -525,13 +532,10 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                 dataType: "json",
                 url: "{{ route('bookingStatus.update') }}",
                 data: {
-                    '_token': '{{ csrf_token() }}',
                     'status': status,
-                    'type': 'payment',
                     'bookingId': id
                 },
                 success: function(data) {
-                    localStorage.setItem('bookingStatusChanged', 'true');
                     // Handle success response
                 }
             });
