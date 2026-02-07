@@ -1040,11 +1040,12 @@ class BookingController extends Controller
 
     public function updateStatus(Request $request)
     {
+        $booking = Booking::find($request->bookingId);
+
         switch ($request->type) {
             case 'payment':
                 $payment = Payment::where('booking_id', $request->bookingId)->first();
                 if (!$payment) {
-                    $booking = Booking::find($request->bookingId);
                     Payment::create([
                         'booking_id' => $request->bookingId,
                         'customer_id' => $booking->customer_id,
@@ -1055,13 +1056,29 @@ class BookingController extends Controller
                 } else {
                     $payment->update(['payment_status' => $request->status]);
                 }
+                // Create booking activity for payment status change
+                \App\Models\BookingActivity::create([
+                    'booking_id' => $request->bookingId,
+                    'datetime' => now(),
+                    'activity_type' => 'Payment Status Updated',
+                    'activity_message' => 'Payment status changed to ' . $request->status,
+                    'activity_data' => json_encode(['status' => $request->status]),
+                ]);
                 break;
             default:
-                Booking::find($request->bookingId)->update(['status' => $request->status]);
+                $booking->update(['status' => $request->status]);
+                // Create booking activity for booking status change
+                \App\Models\BookingActivity::create([
+                    'booking_id' => $request->bookingId,
+                    'datetime' => now(),
+                    'activity_type' => 'Booking Status Updated',
+                    'activity_message' => 'Booking status changed to ' . $request->status,
+                    'activity_data' => json_encode(['status' => $request->status]),
+                ]);
+
                 if ($request->status == 'completed') {
                     $payment = Payment::where('booking_id', $request->bookingId)->first();
                     if (!$payment) {
-                        $booking = Booking::find($request->bookingId);
                         Payment::create([
                             'booking_id' => $request->bookingId,
                             'customer_id' => $booking->customer_id,
