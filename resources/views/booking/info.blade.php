@@ -53,7 +53,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_date')}}</p>
@@ -61,15 +61,23 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_status')}}</p>
+                                        @hasanyrole('admin|demo_admin')
+                                        <select class="form-select form-select-sm bookingstatus" style="width:auto; font-weight:600; color:#0d6efd; border-color:#0d6efd;" data-id="{{ $bookingdata->id }}">
+                                            @foreach(App\Models\BookingStatus::whereIn('value', ['pending', 'accept', 'completed', 'cancelled'])->get() as $status)
+                                                <option value="{{ $status->value }}" {{ $bookingdata->status == $status->value ? 'selected' : '' }}>{{ $status->label }}</option>
+                                            @endforeach
+                                        </select>
+                                        @else
                                         <p class="mb-0 text-primary" id="booking_status__span">{{ App\Models\BookingStatus::bookingStatus($bookingdata->status)}}</p>
+                                        @endhasanyrole
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.total_amount')}}</p>
@@ -77,7 +85,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.payment_method')}}</p>
@@ -85,10 +93,16 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{ __('messages.payment_status') }}</p>
+                                        @hasanyrole('admin|demo_admin')
+                                        <select class="form-select form-select-sm paymentStatus" style="width:auto; font-weight:600;" data-id="{{ $bookingdata->id }}">
+                                            <option value="pending" {{ (isset($payment) && $payment->payment_status == 'pending') ? 'selected' : '' }}>Pending</option>
+                                            <option value="paid" {{ (isset($payment) && $payment->payment_status == 'paid') ? 'selected' : '' }}>Paid</option>
+                                        </select>
+                                        @else
                                         @if(isset($payment) && $payment->payment_status)
                                             @php
                                                 $statusClass = match($payment->payment_status) {
@@ -105,13 +119,14 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                                 {{ __('messages.pending') }}
                                             </p>
                                         @endif
+                                        @endhasanyrole
                                     </div>
                                 </div>
                             </div>
                             
                             <!-- Add Cancellation Reason Card -->
                             @if($bookingdata->status === 'cancelled')
-                            <div class="col-md-4">
+                            <div class="col-md-4" style="display:none;">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{ __('landingpage.cancel_reason') }}</p>
@@ -129,7 +144,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
 
             <!-- Order information section  -->
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-4" style="display:none;">
                     <div class="card">
                         <div class="card-body">
                         <div class="d-flex align-items-start gap-3">
@@ -180,9 +195,9 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                             </div>
                     </div>
                 </div>
-                <!-- UX Serve - Provider section hidden
-                <!-- Provider Information -->
-                <div class="col-md-4">
+                <!-- UX Serve - Provider section hidden -->
+                <!-- Provider Information
+                <div class="col-md-4" style="display:none;">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-start gap-3">
@@ -225,9 +240,8 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                         </div>
                     </div>
                 </div>
-                -->
                 <!-- Handyman Information -->
-                <div class="col-md-4">
+                <div class="col-md-4" style="display:none;">
                     <div class="card">
                                 @if(count($bookingdata->handymanAdded) > 0)
                                     @foreach($bookingdata->handymanAdded as $booking)
@@ -274,7 +288,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
         </div>  
 
         <!-- billing section -->
-        <div class="col-md-4">
+        <div class="col-md-4" style="display:none;">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
