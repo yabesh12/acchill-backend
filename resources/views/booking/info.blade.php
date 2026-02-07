@@ -144,7 +144,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
 
             <!-- Order information section  -->
             <div class="row">
-                <div class="col-md-4" style="display:none;">
+                <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
                         <div class="d-flex align-items-start gap-3">
