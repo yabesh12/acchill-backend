@@ -53,7 +53,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" style="display:none;">
+                            <div class="col-md-4">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_date')}}</p>
@@ -61,7 +61,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" style="display:none;">
+                            <div class="col-md-4">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.booking_status')}}</p>
@@ -77,7 +77,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" style="display:none;">
+                            <div class="col-md-4">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.total_amount')}}</p>
@@ -85,7 +85,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" style="display:none;">
+                            <div class="col-md-4">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{__('messages.payment_method')}}</p>
@@ -93,7 +93,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4" style="display:none;">
+                            <div class="col-md-4">
                                 <div class="card h-100">
                                     <div class="card-body">
                                         <p class="opacity-75 fz-12">{{ __('messages.payment_status') }}</p>
