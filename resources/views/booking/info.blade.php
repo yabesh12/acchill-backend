@@ -181,7 +181,7 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
                                     </li> -->
                                     <li class="d-flex align-items-center mb-2">
                                         <i class="ri-map-pin-line me-2"></i>
-                                        <span class="text-wrap">{{ optional($bookingdata->customer)->address ?? '-' }}</span>
+                                        <span class="text-wrap"><strong>Service Address:</strong> {{ $bookingdata->address ?? '-' }}</span>
                                     </li>
                                     @if($bookingdata->phone_number)
                                     <li class="d-flex align-items-center">
