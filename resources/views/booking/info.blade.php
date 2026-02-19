@@ -426,6 +426,64 @@ $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
         </div>  
     </div>  
 
+    <!-- Cart Services Table (Multi-Service Bookings) -->
+    @if(isset($bookingdata->bookingServiceItems) && $bookingdata->bookingServiceItems->count() > 0)
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive mb-4">
+                    <h4 class="mb-3"><i class="ri-shopping-cart-2-line me-2"></i>Services in This Booking</h4>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>{{__('messages.service')}}</th>
+                                <th class="text-center">{{__('messages.price')}}</th>
+                                <th class="text-center">{{__('messages.quantity')}}</th>
+                                <th class="text-end">{{__('messages.total_amount')}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $cartTotal = 0; @endphp
+                            @foreach($bookingdata->bookingServiceItems as $index => $item)
+                            @php $cartTotal += $item->total_price; @endphp
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        @if($item->service && $item->service->getFirstMedia('service_attachment'))
+                                            <img src="{{ $item->service->getFirstMedia('service_attachment')->getUrl() }}"
+                                                alt="{{ $item->service_name }}"
+                                                class="rounded"
+                                                style="width: 40px; height: 40px; object-fit: cover;">
+                                        @endif
+                                        <div>
+                                            <strong>{{ $item->service_name }}</strong>
+                                            @if($item->discount > 0)
+                                                <br><small class="text-success">{{ $item->discount }}% off</small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">{{ getPriceFormat($item->unit_price) }}</td>
+                                <td class="text-center"><span class="badge bg-primary">{{ $item->quantity }}</span></td>
+                                <td class="text-end"><strong>{{ getPriceFormat($item->total_price) }}</strong></td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>Cart Total:</strong></td>
+                                <td class="text-end"><strong class="text-primary fs-5">{{ getPriceFormat($cartTotal) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Extra Charges table -->
     @if(count($bookingdata->bookingExtraCharge) > 0)
     <div class="col-md-12">

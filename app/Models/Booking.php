@@ -156,6 +156,7 @@ class Booking extends Model
             $row->bookingExtraCharge()->delete();
             $row->bookingPackage()->delete();
             $row->commissionsdata()->delete();
+            $row->bookingServiceItems()->delete();
             if($row->forceDeleting === true)
             {
                 $row->couponAdded()->withTrashed()->forceDelete();
@@ -168,6 +169,7 @@ class Booking extends Model
                 $row->bookingExtraCharge()->withTrashed()->forceDelete();
                 $row->bookingPackage()->withTrashed()->forceDelete();
                 $row->commissionsdata()->withTrashed()->forceDelete();
+                $row->bookingServiceItems()->withTrashed()->forceDelete();
             }
         });
 
@@ -185,7 +187,8 @@ class Booking extends Model
             $row->bookingExtraCharge()->withTrashed()->restore();
             $row->bookingPackage()->withTrashed()->restore();
             $row->commissionsdata()->withTrashed()->restore();
-        });    
+            $row->bookingServiceItems()->withTrashed()->restore();
+        });
     }
 
     public function handymanByAddress(){
@@ -199,6 +202,9 @@ class Booking extends Model
     }
     public function bookingExtraCharge(){
         return $this->hasMany(BookingExtraCharge::class, 'booking_id','id');
+    }
+    public function bookingServiceItems(){
+        return $this->hasMany(BookingServiceItem::class, 'booking_id','id')->with('service');
     }
     public function bookingPostJob(){
         return $this->belongsTo(PostJobRequest::class, 'post_request_id','id');

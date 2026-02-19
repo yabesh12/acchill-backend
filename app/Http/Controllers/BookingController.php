@@ -25,6 +25,7 @@ use App\Mail\BookingStatusMail;
 
 use App\Models\ServiceAddon;
 use App\Models\BookingRating;
+use App\Models\BookingServiceItem;
 use App\Models\Setting;
 use App\Models\Country;
 use Maatwebsite\Excel\Facades\Excel;
@@ -543,6 +544,32 @@ class BookingController extends Controller
         }
 
 
+        // Handle cart items (multiple services per booking)
+        if ($request->has('cart_items') && is_array($request->cart_items) && count($request->cart_items) > 0) {
+            // Clear existing service items if updating
+            $result->bookingServiceItems()->delete();
+
+            foreach ($request->cart_items as $cartItem) {
+                $cartService = Service::find($cartItem['service_id']);
+                if ($cartService) {
+                    $qty = isset($cartItem['quantity']) ? (int)$cartItem['quantity'] : 1;
+                    $unitPrice = $cartService->price;
+                    $discount = $cartService->discount ?? 0;
+                    $totalPrice = $unitPrice * $qty;
+
+                    BookingServiceItem::create([
+                        'booking_id' => $result->id,
+                        'service_id' => $cartService->id,
+                        'service_name' => $cartService->name,
+                        'unit_price' => $unitPrice,
+                        'quantity' => $qty,
+                        'total_price' => $totalPrice,
+                        'discount' => $discount,
+                    ]);
+                }
+            }
+        }
+
         if ($request->has('booking_package') && $request->booking_package != null) {
             $booking_package = [
                 'booking_id' => $result->id,
@@ -637,7 +664,7 @@ class BookingController extends Controller
         }
 
 
-        $bookingdata = Booking::with('bookingExtraCharge', 'payment', 'service')->myBooking()->find($id);
+        $bookingdata = Booking::with('bookingExtraCharge', 'payment', 'service', 'bookingServiceItems')->myBooking()->find($id);
 
 
         $tabpage = 'info';

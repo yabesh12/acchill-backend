@@ -210,7 +210,7 @@ class BookingController extends Controller
 
         $id = $request->booking_id;
 
-        $booking_data = Booking::with('customer','handymanAdded','provider','service','bookingRating','bookingPostJob','bookingAddonService','bookingPackage','payment')->where('id',$id)->first();
+        $booking_data = Booking::with('customer','handymanAdded','provider','service','bookingRating','bookingPostJob','bookingAddonService','bookingPackage','payment','bookingServiceItems')->where('id',$id)->first();
 
         if($booking_data == null){
             $message = __('messages.booking_not_found');
@@ -266,6 +266,7 @@ class BookingController extends Controller
             'customer_review'   => $customer_review,
             'service_proof'     => $serviceProof,
             'post_request_detail' => $post_job_object,
+            'cart_items'        => $booking_data->bookingServiceItems ?? [],
             // 'bookingpackage'    => $bookingpackage,
         ];
         return comman_custom_response($response);
