@@ -1069,10 +1069,9 @@
     <div class="iq-sidebar-logo">
         <a href="{{ route('home') }}" class="header-logo">
             <img src="{{ getSingleMedia(imageSession('get'), 'logo', null) }}"
-                class="img-fluid rounded-normal light-logo site_logo_preview d-none" alt="logo">
+                class="img-fluid rounded-normal light-logo site_logo_preview" alt="logo">
             <img src="{{ getSingleMedia(imageSession('get'), 'logo', null) }}"
-                class="img-fluid rounded-normal darkmode-logo site_logo_preview" alt="logo">
-            <span class="white-space-no-wrap">{{ ucfirst(str_replace('_', ' ', auth()->user()->user_type)) }}</span>
+                class="img-fluid rounded-normal darkmode-logo site_logo_preview d-none" alt="logo">
         </a>
         <div class="side-menu-bt-sidebar-1">
             <svg xmlns="http://www.w3.org/2000/svg" class="text-light wrapper-menu" width="30" fill="none"
