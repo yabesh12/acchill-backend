@@ -351,9 +351,9 @@ footer .d-flex img {
   --ac-primary-light: #B3E5FC;
   --ac-accent: #00897B;
   --ac-warning: #F57F17;
-  --ac-sidebar-bg: #0D1B2A;
-  --ac-sidebar-hover: #152238;
-  --ac-sidebar-active: #1A2D4A;
+  --ac-sidebar-bg: #FFFFFF;
+  --ac-sidebar-hover: #F0F4F8;
+  --ac-sidebar-active: #E8F0FE;
   --ac-body-bg: #F5F7FA;
   --ac-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   --ac-card-hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -380,21 +380,21 @@ body[data-sidebar="true"] {
   background-color: var(--ac-body-bg) !important;
 }
 
-/* ---- Sidebar ---- */
+/* ---- Sidebar (White Background) ---- */
 .iq-sidebar {
   background: var(--ac-sidebar-bg) !important;
-  border-right: none !important;
-  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15) !important;
+  border-right: 1px solid #E8ECF0 !important;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.04) !important;
 }
 
 .iq-sidebar .iq-sidebar-logo {
-  background: rgba(0, 0, 0, 0.15) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  background: #FFFFFF !important;
+  border-bottom: 1px solid #E8ECF0 !important;
   padding: 15px 20px !important;
 }
 
 .iq-sidebar .iq-sidebar-logo .logo-title {
-  color: #FFFFFF !important;
+  color: var(--ac-primary) !important;
   font-weight: 700 !important;
   font-size: 1.2rem !important;
   letter-spacing: 0.3px !important;
@@ -402,7 +402,7 @@ body[data-sidebar="true"] {
 
 /* Sidebar menu items */
 .iq-sidebar-menu .iq-menu li a {
-  color: rgba(255, 255, 255, 0.65) !important;
+  color: #455A64 !important;
   border-radius: var(--ac-radius-sm) !important;
   margin: 2px 12px !important;
   padding: 10px 15px !important;
@@ -412,7 +412,7 @@ body[data-sidebar="true"] {
 }
 
 .iq-sidebar-menu .iq-menu li a:hover {
-  color: #FFFFFF !important;
+  color: var(--ac-primary) !important;
   background: var(--ac-sidebar-hover) !important;
 }
 
@@ -427,12 +427,15 @@ body[data-sidebar="true"] {
 /* Sidebar icons */
 .iq-sidebar-menu .iq-menu li a svg,
 .iq-sidebar-menu .iq-menu li a i {
-  color: rgba(255, 255, 255, 0.5) !important;
+  color: #78909C !important;
   transition: color 0.2s ease !important;
 }
 
 .iq-sidebar-menu .iq-menu li a:hover svg,
-.iq-sidebar-menu .iq-menu li a:hover i,
+.iq-sidebar-menu .iq-menu li a:hover i {
+  color: var(--ac-primary) !important;
+}
+
 .iq-sidebar-menu .iq-menu li a.active svg,
 .iq-sidebar-menu .iq-menu li a.active i,
 .iq-sidebar-menu .iq-menu li.active > a svg,
@@ -442,7 +445,7 @@ body[data-sidebar="true"] {
 
 /* Sidebar category labels */
 .iq-sidebar-menu .iq-menu li.iq-menu-title {
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: #90A4AE !important;
   font-size: 0.7rem !important;
   font-weight: 700 !important;
   letter-spacing: 1.2px !important;
@@ -451,20 +454,20 @@ body[data-sidebar="true"] {
 }
 
 .iq-sidebar-menu .iq-menu li.iq-menu-title span {
-  color: rgba(255, 255, 255, 0.3) !important;
+  color: #90A4AE !important;
 }
 
 /* Sidebar submenu */
 .iq-sidebar-menu .iq-menu .iq-submenu li a {
   padding-left: 30px !important;
   font-size: 0.82rem !important;
-  color: rgba(255, 255, 255, 0.5) !important;
+  color: #78909C !important;
   margin: 1px 12px 1px 20px !important;
 }
 
 .iq-sidebar-menu .iq-menu .iq-submenu li a:hover,
 .iq-sidebar-menu .iq-menu .iq-submenu li a.active {
-  color: #FFFFFF !important;
+  color: var(--ac-primary) !important;
   background: var(--ac-sidebar-hover) !important;
 }
 
@@ -474,7 +477,7 @@ body.sidebar-main .iq-sidebar {
 }
 
 body.sidebar-main .iq-sidebar:hover {
-  box-shadow: 4px 0 25px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.06) !important;
 }
 
 /* Sidebar scrollbar */
@@ -483,7 +486,7 @@ body.sidebar-main .iq-sidebar:hover {
 }
 
 .iq-sidebar .iq-sidebar-menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: #CFD8DC !important;
   border-radius: 4px !important;
 }
 
@@ -931,7 +934,8 @@ body.sidebar-main .iq-sidebar:hover {
 
 /* ---- Dark Mode Compatibility ---- */
 body.dark .iq-sidebar {
-  background: #0A1628 !important;
+  background: #1A2035 !important;
+  border-right-color: #2A3045 !important;
 }
 
 body.dark .iq-top-navbar {
