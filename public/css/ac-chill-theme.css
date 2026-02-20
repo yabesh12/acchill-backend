@@ -390,7 +390,46 @@ body[data-sidebar="true"] {
 .iq-sidebar .iq-sidebar-logo {
   background: #FFFFFF !important;
   border-bottom: 1px solid #E8ECF0 !important;
-  padding: 15px 20px !important;
+  padding: 12px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 64px !important;
+}
+
+.iq-sidebar .iq-sidebar-logo .header-logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+}
+
+.iq-sidebar .iq-sidebar-logo .header-logo img {
+  height: 38px !important;
+  max-height: 38px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  border-radius: 6px !important;
+}
+
+/* Show light logo, hide dark logo on white sidebar */
+.iq-sidebar .iq-sidebar-logo .light-logo {
+  display: block !important;
+}
+
+.iq-sidebar .iq-sidebar-logo .darkmode-logo {
+  display: none !important;
+}
+
+.iq-sidebar .iq-sidebar-logo .white-space-no-wrap {
+  color: #1A2035 !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.3px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .iq-sidebar .iq-sidebar-logo .logo-title {
@@ -398,6 +437,11 @@ body[data-sidebar="true"] {
   font-weight: 700 !important;
   font-size: 1.2rem !important;
   letter-spacing: 0.3px !important;
+}
+
+/* Sidebar close button color for white bg */
+.iq-sidebar .iq-sidebar-logo .side-menu-bt-sidebar-1 svg {
+  color: #78909C !important;
 }
 
 /* Sidebar menu items */
