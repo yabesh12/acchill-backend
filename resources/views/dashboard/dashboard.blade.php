@@ -2,7 +2,13 @@
 <x-master-layout>
     <div class="container-fluid">
         <div class="row">
-            <!-- test-->
+            <!-- Dashboard Welcome Header -->
+            <div class="col-md-12">
+                <div class="dashboard-welcome">
+                    <h2>Welcome back, {{ auth()->user()->first_name }}!</h2>
+                    <p>{{ \Carbon\Carbon::now()->format('l, F j, Y') }}</p>
+                </div>
+            </div>
             @if($rezorpayX_details ==null)
             <div class="col-md-12">
                 <div class="alert alert-warning border border-warning py-3">
@@ -69,7 +75,7 @@
 
                     <div class="col-lg-3 col-md-6">
                         <a  href="{{ route('earning') }}">
-                            <div class="card total-revenue">
+                            <div class="card total-earning-card">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
@@ -244,7 +250,7 @@
         }],
         chart: {
             height: 265,
-            type: 'line',
+            type: 'area',
             toolbar:{
                 show: true,
             },
@@ -253,7 +259,20 @@
                 }
             }
         },
-        colors: ['var(--bs-primary)'],
+        colors: ['#0277BD'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.45,
+                opacityTo: 0.05,
+                stops: [0, 100]
+            }
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 3
+        },
         plotOptions: {
             bar: {
                 horizontal: false,
