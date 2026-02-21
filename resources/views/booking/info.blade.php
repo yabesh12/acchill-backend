@@ -83,7 +83,7 @@ $addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata
                                             </div>
                                         </td>
                                         <td class="text-center">{{ getPriceFormat($item->unit_price) }}</td>
-                                        <td class="text-center"><span class="badge bg-primary">{{ $item->quantity }}</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark border">{{ $item->quantity }}</span></td>
                                         <td class="text-end pe-3"><strong>{{ getPriceFormat($item->total_price) }}</strong></td>
                                     </tr>
                                     @endforeach
@@ -101,7 +101,7 @@ $addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata
                                             </div>
                                         </td>
                                         <td class="text-center">{{ getPriceFormat($bookingdata->amount) }}</td>
-                                        <td class="text-center"><span class="badge bg-primary">{{ $bookingdata->quantity ?? 1 }}</span></td>
+                                        <td class="text-center"><span class="badge bg-light text-dark border">{{ $bookingdata->quantity ?? 1 }}</span></td>
                                         <td class="text-end pe-3"><strong>{{ getPriceFormat($bookingdata->amount * ($bookingdata->quantity ?? 1)) }}</strong></td>
                                     </tr>
                                 @endif
@@ -119,10 +119,6 @@ $addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata
                 <div class="card-body">
                     <table class="table table-borderless mb-0">
                         <tbody>
-                            <tr>
-                                <td class="text-muted">Subtotal</td>
-                                <td class="text-end">{{ getPriceFormat($bookingdata->amount * ($bookingdata->quantity ?? 1)) }}</td>
-                            </tr>
                             @if($bookingdata->bookingPackage == null && $bookingdata->discount > 0)
                             <tr>
                                 <td class="text-muted">Discount <span class="text-success">({{ $bookingdata->discount }}% off)</span></td>
