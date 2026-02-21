@@ -119,12 +119,6 @@ $addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata
                 <div class="card-body">
                     <table class="table table-borderless mb-0">
                         <tbody>
-                            @if($bookingdata->bookingPackage == null && $bookingdata->discount > 0)
-                            <tr>
-                                <td class="text-muted">Discount <span class="text-success">({{ $bookingdata->discount }}% off)</span></td>
-                                <td class="text-end text-success">- {{ getPriceFormat($bookingdata->final_discount_amount) }}</td>
-                            </tr>
-                            @endif
                             @if($bookingdata->couponAdded != null)
                             <tr>
                                 <td class="text-muted">Coupon <span class="badge bg-success-subtle text-success">{{ $bookingdata->couponAdded->code }}</span></td>
