@@ -502,7 +502,7 @@ class BookingController extends Controller
         $this->sendNotification($activity_data);
 
 
-        if ($data['coupon_id'] != null) {
+        if (isset($data['coupon_id']) && $data['coupon_id'] != null) {
             $coupons = Coupon::find($data['coupon_id']);
 
             $coupon_data = [

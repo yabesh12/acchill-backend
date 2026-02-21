@@ -204,4 +204,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::Post('helpdesk-closed/{id}', [ App\Http\Controllers\HelpDeskController::class, 'closed' ] );
     Route::get('helpdesk-detail', [ API\HelpDeskController::class, 'getHelpDeskDetail' ] );
     Route::post('helpdesk-activity-save/{id}', [App\Http\Controllers\HelpDeskController::class, 'activity']);
+
+    // Cart API routes
+    Route::get('cart', [App\Http\Controllers\API\CartController::class, 'index']);
+    Route::post('cart/add', [App\Http\Controllers\API\CartController::class, 'add']);
+    Route::post('cart/update', [App\Http\Controllers\API\CartController::class, 'update']);
+    Route::post('cart/remove', [App\Http\Controllers\API\CartController::class, 'remove']);
+    Route::post('cart/clear', [App\Http\Controllers\API\CartController::class, 'clear']);
+
 });

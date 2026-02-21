@@ -1051,3 +1051,38 @@ body.dark .common-list li:hover {
     padding: 12px 16px !important;
   }
 }
+
+
+/* ============================================
+   SIDEBAR NATIVE SCROLLING
+   ============================================ */
+
+/* Native scrolling container for sidebar */
+.iq-sidebar .sidebar-scroll-native {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 80px);
+  max-height: calc(100vh - 80px);
+  scrollbar-width: thin;
+  scrollbar-color: #CFD8DC transparent;
+}
+
+.iq-sidebar .sidebar-scroll-native::-webkit-scrollbar {
+  width: 4px;
+}
+
+.iq-sidebar .sidebar-scroll-native::-webkit-scrollbar-thumb {
+  background: #CFD8DC;
+  border-radius: 4px;
+}
+
+.iq-sidebar .sidebar-scroll-native::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Also keep fallback for data-scrollbar in case it's still used elsewhere */
+.iq-sidebar .data-scrollbar {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: calc(100vh - 80px) !important;
+}
