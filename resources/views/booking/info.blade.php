@@ -1,642 +1,402 @@
 @php
 $sitesetup = App\Models\Setting::where('type','site-setup')->where('key', 'site-setup')->first();
 $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
+$extraCharges = $bookingdata->bookingExtraCharge->count() > 0 ? $bookingdata->getExtraChargeValue() : 0;
+$addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata->bookingAddonService->sum('price') : 0;
 @endphp
 {{ html()->hidden('id',$bookingdata->id ?? null) }}
+
 <div class="container-fluid">
-    <div class="row">   
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Header Section -->
-                        <div class="border-bottom pb-1 d-flex justify-content-between align-items-center gap-3 flex-wrap">
-                            <div>
-                                <h3 class="mb-2 text-primary">{{__('messages.book_id')}} {{ '#' . $bookingdata->id ?? '-'}}</h3>
-                            </div>
-                            <div class="d-flex flex-wrap flex-xxl-nowrap gap-3">
-                                <div class="w3-third">
-                                    @if($bookingdata->handymanAdded->count() == 0 && $bookingdata->status !== "cancelled")
-                                        @hasanyrole('admin|demo_admin|provider')
-                                        <button class="float-end btn btn-primary" id="assign-provider" style="display:none;" data-id="{{ $bookingdata->id }}" data-handyman-id="{{ $bookingdata->provider_id }}">
-                                            <i class="lab la-telegram-plane"></i>
-                                            {{ __('messages.assign_provider') }}
-                                        </button>
-                                        @endhasanyrole
-                                    @endif
-                                </div>
-                                    <div class="w3-third">
-                                        @if($bookingdata->handymanAdded->count() == 0 && $bookingdata->status !== "cancelled")
-                                            @hasanyrole('admin|demo_admin|provider')
-                                            <a href="{{ route('booking.assign_form',['id'=> $bookingdata->id ]) }}"
-                                            class=" float-end btn btn-primary loadRemoteModel"><i class="lab la-telegram-plane"></i>
-                                            {{ __('messages.assign_handyman') }}</a>
-                                            @endhasanyrole
-                                        @endif
-                                    </div>
-
-                                @if($bookingdata->payment_id !== null)
-                                    <a href="{{route('invoice_pdf',$bookingdata->id)}}" class="btn btn-primary" target="_blank">
-                                        <i class="ri-file-text-line"></i>
-                                        {{__('messages.invoice')}}
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                        <!-- Main Content Row -->
-                        <div class="row ">    
-                            <div class="col-md-4 ">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <p class="opacity-75 fz-12">{{__('messages.book_placed')}}</p>
-                                        <p class="mb-0">{{ date("$datetime->date_format $datetime->time_format", strtotime($bookingdata->created_at)) ?? '-'}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <p class="opacity-75 fz-12">{{__('messages.booking_date')}}</p>
-                                        <p class="mb-0" id="service_schedule__span">{{ date("$datetime->date_format $datetime->time_format", strtotime($bookingdata->date)) ?? '-'}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <p class="opacity-75 fz-12">{{__('messages.booking_status')}}</p>
-                                        @hasanyrole('admin|demo_admin')
-                                        <select class="form-select form-select-sm bookingstatus" style="width:auto; font-weight:600; color:#0d6efd; border-color:#0d6efd;" data-id="{{ $bookingdata->id }}">
-                                            @foreach(App\Models\BookingStatus::whereIn('value', ['pending', 'accept', 'completed', 'cancelled'])->get() as $status)
-                                                <option value="{{ $status->value }}" {{ $bookingdata->status == $status->value ? 'selected' : '' }}>{{ $status->label }}</option>
-                                            @endforeach
-                                        </select>
-                                        @else
-                                        <p class="mb-0 text-primary" id="booking_status__span">{{ App\Models\BookingStatus::bookingStatus($bookingdata->status)}}</p>
-                                        @endhasanyrole
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <p class="opacity-75 fz-12">{{__('messages.total_amount')}}</p>
-                                        <p class="mb-0 text-primary">{{ getPriceFormat($bookingdata->total_amount) }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <p class="opacity-75 fz-12">{{__('messages.payment_method')}}</p>
-                                        <p class="mb-0 text-primary">{{ isset($payment) ? ucfirst($payment->payment_type) : '-' }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <p class="opacity-75 fz-12">{{ __('messages.payment_status') }}</p>
-                                        @hasanyrole('admin|demo_admin')
-                                        <select class="form-select form-select-sm paymentStatus" style="width:auto; font-weight:600;" data-id="{{ $bookingdata->id }}">
-                                            <option value="pending" {{ (isset($payment) && $payment->payment_status == 'pending') ? 'selected' : '' }}>Pending</option>
-                                            <option value="paid" {{ (isset($payment) && $payment->payment_status == 'paid') ? 'selected' : '' }}>Paid</option>
-                                        </select>
-                                        @else
-                                        @if(isset($payment) && $payment->payment_status)
-                                            @php
-                                                $statusClass = match($payment->payment_status) {
-                                                    'paid', 'advanced_paid' => 'text-success',
-                                                    'Advanced Refund' => 'text-warning',
-                                                    default => 'text-danger',
-                                                };
-                                            @endphp
-                                            <p class="mb-0 {{ $statusClass }}">
-                                                {{ str_replace('_', ' ', ucfirst($payment->payment_status)) }}
-                                            </p>
-                                        @else
-                                            <p class="mb-0 text-danger">
-                                                {{ __('messages.pending') }}
-                                            </p>
-                                        @endif
-                                        @endhasanyrole
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Add Cancellation Reason Card -->
-                            @if($bookingdata->status === 'cancelled')
-                            <div class="col-md-4" style="display:none;">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <p class="opacity-75 fz-12">{{ __('landingpage.cancel_reason') }}</p>
-                                        <p class="mb-0 text-danger">
-                                            {{ $bookingdata->reason ?? __('messages.no_reason_provided') }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
+    {{-- ===== TOP HEADER BAR ===== --}}
+    <div class="card mb-3">
+        <div class="card-body py-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-3">
+                    <h3 class="mb-0 text-primary fw-bold">Booking #{{ $bookingdata->id }}</h3>
+                    @php
+                        $statusColors = [
+                            'pending' => 'warning',
+                            'accept' => 'info',
+                            'ongoing' => 'primary',
+                            'in_progress' => 'primary',
+                            'hold' => 'secondary',
+                            'cancelled' => 'danger',
+                            'rejected' => 'danger',
+                            'completed' => 'success',
+                        ];
+                        $badgeColor = $statusColors[$bookingdata->status] ?? 'secondary';
+                    @endphp
+                    <span class="badge bg-{{ $badgeColor }} fs-6 px-3 py-2">{{ ucfirst(str_replace('_', ' ', $bookingdata->status)) }}</span>
                 </div>
-            </div>  
-
-            <!-- Order information section  -->
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                        <div class="d-flex align-items-start gap-3">
-                                                <div class="flex-shrink-0">
-                                                    
-                                                        <img src="{{ getSingleMedia($bookingdata->customer,'profile_image', null) }}" 
-                                                            alt="Customer Profile" 
-                                                            class="rounded-circle"
-                                                            style="width: 60px; height: 60px; object-fit: cover;">
-                                                            @if(optional($bookingdata->customer)->profile_image)
-                                                        <img src="{{asset('public/images/default.png')}}" 
-                                                            alt="Default Profile" 
-                                                            class="rounded-circle"
-                                                            style="width: 60px; height: 60px; object-fit: cover;">
-                                                    @endif
-                                                </div>
-                                                <div class="flex-grow-1">
-                                <p class="mb-1 text-primary">{{__('messages.customer')}}</p>
-                                <h5 class="mb-2">{{optional($bookingdata->customer)->display_name ?? '-'}}</h5>
-                            </div>
-                        </div>
-                                <ul class="list-unstyled mt-3">
-                                    <li class="d-flex align-items-center mb-2">
-                                        <i class="ri-phone-line me-2"></i>
-                                        <a href="tel:{{optional($bookingdata->customer)->contact_number}}" class="text-body">
-                                            {{ optional($bookingdata->customer)->contact_number ?? '-' }}
-                                        </a>
-                                    </li>
-                                    <!-- <li class="d-flex align-items-center mb-2">
-                                        <i class="ri-mail-line me-2"></i>
-                                        <a href="mailto:{{optional($bookingdata->customer)->email}}" class="text-body">
-                                            {{ optional($bookingdata->customer)->email ?? '-' }}
-                                        </a>
-                                    </li> -->
-                                    <li class="d-flex align-items-center mb-2">
-                                        <i class="ri-map-pin-line me-2"></i>
-                                        <span class="text-wrap"><strong>Service Address:</strong> {{ $bookingdata->address ?? '-' }}</span>
-                                    </li>
-                                    @if($bookingdata->phone_number)
-                                    <li class="d-flex align-items-center">
-                                        <i class="ri-smartphone-line me-2"></i>
-                                        <a href="tel:{{ $bookingdata->phone_number }}" class="text-body">
-                                            <strong>Booking Mobile:</strong> {{ $bookingdata->phone_number }}
-                                        </a>
-                                    </li>
-                                    @endif
-                                </ul>
-                            </div>
-                    </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    @if($bookingdata->handymanAdded->count() == 0 && $bookingdata->status !== 'cancelled')
+                        @hasanyrole('admin|demo_admin|provider')
+                        <a href="{{ route('booking.assign_form',['id'=> $bookingdata->id ]) }}" class="btn btn-outline-primary btn-sm loadRemoteModel">
+                            <i class="ri-user-add-line me-1"></i>Assign Handyman
+                        </a>
+                        @endhasanyrole
+                    @endif
+                    @if($bookingdata->payment_id !== null)
+                        <a href="{{ route('invoice_pdf',$bookingdata->id) }}" class="btn btn-primary btn-sm" target="_blank">
+                            <i class="ri-file-text-line me-1"></i>Download Invoice
+                        </a>
+                    @endif
                 </div>
-                <!-- UX Serve - Provider section hidden -->
-                <!-- Provider Information
-                <div class="col-md-4" style="display:none;">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-start gap-3">
-                                <div class="flex-shrink-0">
-                                    
-                                        <img src="{{ getSingleMedia($bookingdata->provider,'profile_image', null) }}" 
-                                            alt="Provider Profile" 
-                                            class="rounded-circle"
-                                            style="width: 60px; height: 60px; object-fit: cover;">
-                                    @if(optional($bookingdata->provider)->profile_image)
-                                        <img src="{{ asset('images/default-user.png') }}" 
-                                            alt="Default Profile" 
-                                            class="rounded-circle"
-                                            style="width: 60px; height: 60px; object-fit: cover;">
-                                    @endif
-                                </div>
-                                <div class="flex-grow-1">
-                                    <p class="mb-1 text-primary">{{__('messages.provider')}}</p>
-                                    <h5 class="mb-2">{{optional($bookingdata->provider)->display_name ?? '-'}}</h5>
-                                </div>
-                            </div>
-                                    <ul class="list-unstyled mt-3">
-                                        <li class="d-flex align-items-center mb-2">
-                                            <i class="ri-phone-line me-2"></i>
-                                            <a href="tel:{{optional($bookingdata->provider)->contact_number}}" class="text-body">
-                                                {{ optional($bookingdata->provider)->contact_number ?? '-' }}
-                                            </a>
-                                        </li>
-                                        <!-- <li class="d-flex align-items-center mb-2">
-                                            <i class="ri-mail-line me-2"></i>
-                                            <a href="mailto:{{optional($bookingdata->provider)->email}}" class="text-body">
-                                                {{ optional($bookingdata->provider)->email ?? '-' }}
-                                            </a>
-                                        </li> -->
-                                        <li class="d-flex align-items-center">
-                                            <i class="ri-map-pin-line me-2"></i>
-                                            <span class="text-wrap">{{ optional($bookingdata->provider)->address ?? '-' }}</span>
-                                        </li>
-                                    </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- Handyman Information -->
-                <div class="col-md-4" style="display:none;">
-                    <div class="card">
-                                @if(count($bookingdata->handymanAdded) > 0)
-                                    @foreach($bookingdata->handymanAdded as $booking)
-                                    <div class="card-body">
-                                    <div class="d-flex align-items-start gap-4">
-                                        <div class="flex-shrink-0">
-                                            
-                                                <img src="{{ getSingleMedia($booking->handyman,'profile_image', null) }}" 
-                                                    alt="Handyman Profile" 
-                                                    class="rounded-circle"
-                                                    style="width: 60px; height: 60px; object-fit: cover;">
-                                                    @if(optional($booking->handyman)->profile_image)
-                                                <img src="{{ asset('images/default-user.png') }}" 
-                                                    alt="Default Profile" 
-                                                    class="rounded-circle"
-                                                    style="width: 60px; height: 60px; object-fit: cover;">
-                                            @endif
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <p class="mb-1 text-primary">{{__('messages.handyman')}}</p>
-                                            <h5 class="mb-2 ">{{optional($booking->handyman)->display_name ?? '-'}}</h5>
-                                        </div>
-                                    </div>
-                                            <ul class="list-unstyled mt-3">
-                                                <li class="d-flex align-items-center mb-2">
-                                                    <i class="ri-phone-line me-2"></i>
-                                                    <a href="tel:{{optional($booking->handyman)->contact_number}}" class="text-body">
-                                                        {{ optional($booking->handyman)->contact_number ?? '-' }}
-                                                    </a>
-                                                </li>
-                                                <li class="d-flex align-items-center">
-                                                    <i class="ri-map-pin-line me-2"></i>
-                                                    <span class="text-wrap">{{ optional($booking->handyman)->address ?? '-' }}</span>
-                                                </li>
-                                            </ul>
-                                        </div>
+            </div>
+        </div>
+    </div>
 
-                                    @endforeach
-                                @endif
-                    </div>
+    <div class="row">
+        {{-- ===== LEFT COLUMN ===== --}}
+        <div class="col-lg-8">
+            {{-- Service Details Card --}}
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="ri-service-line me-2"></i>Service Details</h5>
                 </div>
-                    
-            </div>  
-        </div>  
-
-        <!-- billing section -->
-        <div class="col-md-4" style="display:none;">
-            <div class="card">
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                                    <table class="table table-borderless align-middle mb-0">
-                                        <tbody>
-                                            <h3 class="mb-3">{{__('messages.payment_summary')}}</h3>
-                                            <tr class="border-bottom">
-                                                <td>{{__('messages.quantity')}}</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="text-end">{{ $bookingdata->quantity }}</td>
-                                            </tr>
-                                            <tr class="border-bottom">
-                                                <td>{{__('messages.price')}}</td>
-                                                <td></td>
-                                                <td></td>
-                                                @if($bookingdata->service->type == "hourly")
-                                                <td class="text-end">
-                                                    {{ getPriceFormat($bookingdata->amount) }} * {{ $bookingdata->quantity }} / hr =
-                                                    {{ getPriceFormat($bookingdata->final_total_service_price) }}
-                                                </td>
-                                                @else
-                                                <td class="text-end">
-                                                    {{ getPriceFormat($bookingdata->amount) }} * {{ $bookingdata->quantity }} =
-                                                    {{ getPriceFormat($bookingdata->amount * $bookingdata->quantity) }}
-                                                </td>
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Service</th>
+                                    <th class="text-center">Unit Price</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end pe-3">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(isset($bookingdata->bookingServiceItems) && $bookingdata->bookingServiceItems->count() > 0)
+                                    {{-- Multi-service (cart) booking --}}
+                                    @php $cartTotal = 0; @endphp
+                                    @foreach($bookingdata->bookingServiceItems as $item)
+                                    @php $cartTotal += $item->total_price; @endphp
+                                    <tr>
+                                        <td class="ps-3">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if($item->service && $item->service->getFirstMedia('service_attachment'))
+                                                    <img src="{{ $item->service->getFirstMedia('service_attachment')->getUrl() }}"
+                                                        alt="{{ $item->service_name }}" class="rounded"
+                                                        style="width: 36px; height: 36px; object-fit: cover;">
                                                 @endif
-                                                <!-- <td class="text-end">{{ getPriceFormat($bookingdata->amount) }} × {{ $bookingdata->quantity }} = {{ getPriceFormat($bookingdata->amount * $bookingdata->quantity) }}</td> -->
-                                            </tr>
-
-                                            <!-- discount -->
-                                            @if($bookingdata->bookingPackage == null && $bookingdata->discount > 0)
-                                           
-                                            <tr class="border-bottom">
-                                                <td colspan="3">{{ __('messages.discount') }} ({{ $bookingdata->discount }}% off)</td>
-                                                <td class="text-end text-success">-{{ getPriceFormat($bookingdata->final_discount_amount) }}</td>
-                                            </tr>
-                                            @endif
-
-                                            <!-- Coupon -->
-                                            @if($bookingdata->couponAdded != null)
-                                            <tr class="border-bottom">
-                                                <td colspan="3">{{__('messages.coupon')}} ({{$bookingdata->couponAdded->code}})</td>
-                                                <td class="text-end text-success">-{{ getPriceFormat($bookingdata->final_coupon_discount_amount) }}</td>
-                                            </tr>
-                                            @endif
-                                            <!-- Extra Charges -->
-
-                                            @php
-                                            // Calculate extra charges and add-ons
-                                            $extraCharges = $bookingdata->bookingExtraCharge->count() > 0 ? $bookingdata->getExtraChargeValue() : 0;
-                                            $addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata->bookingAddonService->sum('price') : 0;
-                                            @endphp
-                                            @if($extraCharges > 0)
-                                            <tr class="border-bottom">
-                                                <td colspan="3">{{ __('messages.extra_charge') }}</td>
-                                                <td class="text-end text-success">+{{ getPriceFormat($extraCharges) }}</td>
-                                            </tr>
-                                            @endif
-                                           
-                                            @if($addonTotalPrice > 0)
-                                            <tr class="border-bottom">
-                                                <td colspan="3">{{ __('messages.add_ons') }}</td>
-                                                <td class="text-end text-success">+{{ getPriceFormat($addonTotalPrice) }}</td>
-                                            </tr>
-                                            @endif
-                                           
-
-                                            <!-- Subtotal -->
-                                           
-                                            <tr class="border-bottom">
-                                                <td colspan="3">{{ __('messages.subtotal_vat') }}</td>
-                                                <td class="text-end text-success">{{ getPriceFormat($bookingdata->final_sub_total) ?? 0 }}</td>
-                                            </tr>
-                                            <!-- Tax -->
-                                            <tr class="border-bottom">
-                                                <td colspan="3">{{__('messages.tax')}}</td>
-                                                <td class="text-end text-danger">{{ getPriceFormat($bookingdata->final_total_tax) ?? 0 }}</td>
-                                            </tr>
-
-                                            <!-- Grand Total -->
-                                            <tr class="border-bottom">
-                                                <td colspan="3"><strong class="fs-3">{{__('messages.grand_total')}}</strong></td>
-                                                <td class="text-end text-primary"><strong class="fs-3">{{ getPriceFormat($bookingdata->total_amount) ?? 0 }}</strong></td>
-                                            </tr>
-
-                                            <!-- Advance Payment -->
-                                            @if($bookingdata->service->is_enable_advance_payment == 1)
-                                                <tr class="border-bottom">
-                                                    <td colspan="3">{{__('messages.advance_payment_amount')}} ({{$bookingdata->service->advance_payment_amount}}%)</td>
-                                                    <td class="text-end">{{ getPriceFormat($bookingdata->advance_paid_amount) }}</td>
-                                                </tr>
-                                                @if($bookingdata->status !== "cancelled")
-                                                    <tr>
-                                                        <td colspan="3">
-                                                            {{__('messages.remaining_amount')}}
-                                                            @if($payment != null && $payment->payment_status !== 'paid')
-                                                            <span class="badge bg-warning">{{__('messages.pending')}}</span>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-end">
-                                                            @if($payment != null && $payment->payment_status == 'paid') 
-                                                                {{ __('messages.paid') }}
-                                                            @else
-                                                                {{ getPriceFormat($bookingdata->total_amount - $bookingdata->advance_paid_amount) }}
-                                                            @endif
-                                                        </td>
-                                                    </tr>
+                                                <strong>{{ $item->service_name }}</strong>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">{{ getPriceFormat($item->unit_price) }}</td>
+                                        <td class="text-center"><span class="badge bg-primary">{{ $item->quantity }}</span></td>
+                                        <td class="text-end pe-3"><strong>{{ getPriceFormat($item->total_price) }}</strong></td>
+                                    </tr>
+                                    @endforeach
+                                @else
+                                    {{-- Single service booking --}}
+                                    <tr>
+                                        <td class="ps-3">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if($bookingdata->service && $bookingdata->service->getFirstMedia('service_attachment'))
+                                                    <img src="{{ $bookingdata->service->getFirstMedia('service_attachment')->getUrl() }}"
+                                                        alt="{{ optional($bookingdata->service)->name }}" class="rounded"
+                                                        style="width: 36px; height: 36px; object-fit: cover;">
                                                 @endif
-                                                @if($bookingdata->status === "cancelled")
-                                                    <tr>
-                                                        <td colspan="3">{{ __('messages.cancellation_charge') }} ({{ $bookingdata->cancellation_charge }}%)</td>
-                                                        <td class="text-end">{{getPriceFormat($bookingdata->cancellation_charge_amount) ?? 0}}</td>
-                                                    </tr>
-                                                    @if($bookingdata->advance_paid_amount > 0)
-                                                        @php 
-                                                            $refundamount = $bookingdata->advance_paid_amount - $bookingdata->cancellation_charge_amount
-                                                        @endphp
-                                                        @if($refundamount > 0)
-                                                        <tr>
-                                                            <td colspan="3">{{ __('messages.refund_amount') }}</td>
-                                                        
-                                                            <td class="text-end">{{getPriceFormat($refundamount) ?? 0}} </td>
-                                                        
-                                                        </tr>
-                                                        @endif
-                                                    @endif
-                                                @endif
-                                            @endif
-                                        </tbody>
-                                    </table>
+                                                <strong>{{ optional($bookingdata->service)->name ?? '-' }}</strong>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">{{ getPriceFormat($bookingdata->amount) }}</td>
+                                        <td class="text-center"><span class="badge bg-primary">{{ $bookingdata->quantity ?? 1 }}</span></td>
+                                        <td class="text-end pe-3"><strong>{{ getPriceFormat($bookingdata->amount * ($bookingdata->quantity ?? 1)) }}</strong></td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
                     </div>
-                </div>  
+                </div>
             </div>
-        </div>  
-    </div>  
 
-    <!-- Cart Services Table (Multi-Service Bookings) -->
-    @if(isset($bookingdata->bookingServiceItems) && $bookingdata->bookingServiceItems->count() > 0)
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive mb-4">
-                    <h4 class="mb-3"><i class="ri-shopping-cart-2-line me-2"></i>Services in This Booking</h4>
-                    <table class="table table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>{{__('messages.service')}}</th>
-                                <th class="text-center">{{__('messages.price')}}</th>
-                                <th class="text-center">{{__('messages.quantity')}}</th>
-                                <th class="text-end">{{__('messages.total_amount')}}</th>
-                            </tr>
-                        </thead>
+            {{-- Billing Summary Card --}}
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="ri-bill-line me-2"></i>Billing Summary</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
                         <tbody>
-                            @php $cartTotal = 0; @endphp
-                            @foreach($bookingdata->bookingServiceItems as $index => $item)
-                            @php $cartTotal += $item->total_price; @endphp
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        @if($item->service && $item->service->getFirstMedia('service_attachment'))
-                                            <img src="{{ $item->service->getFirstMedia('service_attachment')->getUrl() }}"
-                                                alt="{{ $item->service_name }}"
-                                                class="rounded"
-                                                style="width: 40px; height: 40px; object-fit: cover;">
-                                        @endif
-                                        <div>
-                                            <strong>{{ $item->service_name }}</strong>
-                                            @if($item->discount > 0)
-                                                <br><small class="text-success">{{ $item->discount }}% off</small>
-                                            @endif
-                                        </div>
-                                    </div>
+                                <td class="text-muted">Subtotal</td>
+                                <td class="text-end">{{ getPriceFormat($bookingdata->amount * ($bookingdata->quantity ?? 1)) }}</td>
+                            </tr>
+                            @if($bookingdata->bookingPackage == null && $bookingdata->discount > 0)
+                            <tr>
+                                <td class="text-muted">Discount <span class="text-success">({{ $bookingdata->discount }}% off)</span></td>
+                                <td class="text-end text-success">- {{ getPriceFormat($bookingdata->final_discount_amount) }}</td>
+                            </tr>
+                            @endif
+                            @if($bookingdata->couponAdded != null)
+                            <tr>
+                                <td class="text-muted">Coupon <span class="badge bg-success-subtle text-success">{{ $bookingdata->couponAdded->code }}</span></td>
+                                <td class="text-end text-success">- {{ getPriceFormat($bookingdata->final_coupon_discount_amount) }}</td>
+                            </tr>
+                            @endif
+                            @if($extraCharges > 0)
+                            <tr>
+                                <td class="text-muted">Extra Charges</td>
+                                <td class="text-end">+ {{ getPriceFormat($extraCharges) }}</td>
+                            </tr>
+                            @endif
+                            @if($addonTotalPrice > 0)
+                            <tr>
+                                <td class="text-muted">Add-ons</td>
+                                <td class="text-end">+ {{ getPriceFormat($addonTotalPrice) }}</td>
+                            </tr>
+                            @endif
+                            @if($bookingdata->final_total_tax > 0)
+                            <tr>
+                                <td class="text-muted">Tax</td>
+                                <td class="text-end text-danger">+ {{ getPriceFormat($bookingdata->final_total_tax) }}</td>
+                            </tr>
+                            @endif
+                            <tr class="border-top">
+                                <td><strong class="fs-5">Total Amount</strong></td>
+                                <td class="text-end"><strong class="fs-5 text-primary">{{ getPriceFormat($bookingdata->total_amount) }}</strong></td>
+                            </tr>
+                            @if($bookingdata->service->is_enable_advance_payment == 1)
+                            <tr>
+                                <td class="text-muted">Advance Paid ({{ $bookingdata->service->advance_payment_amount }}%)</td>
+                                <td class="text-end">{{ getPriceFormat($bookingdata->advance_paid_amount) }}</td>
+                            </tr>
+                            @if($bookingdata->status !== 'cancelled')
+                            <tr>
+                                <td class="text-muted">
+                                    Remaining Amount
+                                    @if($payment != null && $payment->payment_status !== 'paid')
+                                    <span class="badge bg-warning-subtle text-warning">Pending</span>
+                                    @endif
                                 </td>
-                                <td class="text-center">{{ getPriceFormat($item->unit_price) }}</td>
-                                <td class="text-center"><span class="badge bg-primary">{{ $item->quantity }}</span></td>
-                                <td class="text-end"><strong>{{ getPriceFormat($item->total_price) }}</strong></td>
+                                <td class="text-end">
+                                    @if($payment != null && $payment->payment_status == 'paid')
+                                        <span class="badge bg-success">Paid</span>
+                                    @else
+                                        {{ getPriceFormat($bookingdata->total_amount - $bookingdata->advance_paid_amount) }}
+                                    @endif
+                                </td>
                             </tr>
-                            @endforeach
+                            @endif
+                            @endif
                         </tbody>
-                        <tfoot class="table-light">
-                            <tr>
-                                <td colspan="4" class="text-end"><strong>Cart Total:</strong></td>
-                                <td class="text-end"><strong class="text-primary fs-5">{{ getPriceFormat($cartTotal) }}</strong></td>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
-    @endif
 
-    <!-- Extra Charges table -->
-    @if(count($bookingdata->bookingExtraCharge) > 0)
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive mb-4">
-                    <h4 class="mb-3">{{__('messages.extra_charge')}}</h4>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>{{__('messages.title')}}</th>
-                                <th>{{__('messages.price')}}</th>
-                                <th>{{__('messages.quantity')}}</th>
-                                <th class="text-end">{{__('messages.total_amount')}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($bookingdata->bookingExtraCharge as $charge)
-                            <tr>
-                                <td>{{$charge->title}}</td>
-                                <td>{{getPriceFormat($charge->price)}}</td>
-                                <td>{{$charge->qty}}</td>
-                                <td class="text-end">{{getPriceFormat($charge->price * $charge->qty)}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            {{-- Extra Charges Table --}}
+            @if(count($bookingdata->bookingExtraCharge) > 0)
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="ri-add-circle-line me-2"></i>Extra Charges</h5>
                 </div>
-                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Title</th>
+                                    <th class="text-center">Price</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end pe-3">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($bookingdata->bookingExtraCharge as $charge)
+                                <tr>
+                                    <td class="ps-3">{{ $charge->title }}</td>
+                                    <td class="text-center">{{ getPriceFormat($charge->price) }}</td>
+                                    <td class="text-center">{{ $charge->qty }}</td>
+                                    <td class="text-end pe-3"><strong>{{ getPriceFormat($charge->price * $charge->qty) }}</strong></td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    @endif  
+            @endif
 
-    <!-- Addon  Charges table -->
-    @if($bookingdata->bookingAddonService->count() > 0 )
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive mb-4">
-                    <h4 class="mb-3">{{__('messages.service_addon')}}</h4>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="ps-lg-3">{{__('messages.title')}}</th>
-                                <th>{{__('messages.price')}}</th>
-                                <th class="text-end">{{__('messages.total_amount')}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($bookingdata->bookingAddonService as $addonservice)
-                        @php
-                        $addonTotalPrice += $addonservice->price;
-                        @endphp
-                        <tr>
-                            <td class="text-wrap ps-lg-3">
-                                <div class="d-flex flex-column">
-                                    <a href="" class="booking-service-link fw-bold">{{$addonservice->name}}</a>
-                                </div>
-                            </td>
-                            <td>{{getPriceFormat($addonservice->price)}}</td>
-                            <td class="text-end">{{getPriceFormat($addonservice->price)}}</td>
-                        </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+            {{-- Service Add-ons Table --}}
+            @if($bookingdata->bookingAddonService->count() > 0)
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="ri-puzzle-line me-2"></i>Service Add-ons</h5>
                 </div>
-                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Add-on Name</th>
+                                    <th class="text-end pe-3">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($bookingdata->bookingAddonService as $addonservice)
+                                <tr>
+                                    <td class="ps-3"><strong>{{ $addonservice->name }}</strong></td>
+                                    <td class="text-end pe-3">{{ getPriceFormat($addonservice->price) }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+            @endif
+        </div>
+
+        {{-- ===== RIGHT COLUMN ===== --}}
+        <div class="col-lg-4">
+            {{-- Booking Info Card --}}
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="ri-information-line me-2"></i>Booking Info</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted small">Booking Date</label>
+                        <p class="mb-0 fw-semibold">{{ date("$datetime->date_format $datetime->time_format", strtotime($bookingdata->date)) ?? '-' }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted small">Placed On</label>
+                        <p class="mb-0">{{ date("$datetime->date_format $datetime->time_format", strtotime($bookingdata->created_at)) ?? '-' }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted small">Booking Status</label>
+                        @hasanyrole('admin|demo_admin')
+                        <select class="form-select form-select-sm bookingstatus" data-id="{{ $bookingdata->id }}">
+                            @foreach(App\Models\BookingStatus::whereIn('value', ['pending', 'accept', 'completed', 'cancelled'])->get() as $status)
+                                <option value="{{ $status->value }}" {{ $bookingdata->status == $status->value ? 'selected' : '' }}>{{ $status->label }}</option>
+                            @endforeach
+                        </select>
+                        @else
+                        <p class="mb-0 text-primary fw-semibold">{{ App\Models\BookingStatus::bookingStatus($bookingdata->status) }}</p>
+                        @endhasanyrole
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted small">Payment Status</label>
+                        @hasanyrole('admin|demo_admin')
+                        <select class="form-select form-select-sm paymentStatus" data-id="{{ $bookingdata->id }}">
+                            <option value="pending" {{ (isset($payment) && $payment->payment_status == 'pending') ? 'selected' : '' }}>Pending</option>
+                            <option value="paid" {{ (isset($payment) && $payment->payment_status == 'paid') ? 'selected' : '' }}>Paid</option>
+                        </select>
+                        @else
+                        @if(isset($payment) && $payment->payment_status)
+                            @php
+                                $statusClass = match($payment->payment_status) {
+                                    'paid', 'advanced_paid' => 'text-success',
+                                    'Advanced Refund' => 'text-warning',
+                                    default => 'text-danger',
+                                };
+                            @endphp
+                            <p class="mb-0 {{ $statusClass }} fw-semibold">{{ str_replace('_', ' ', ucfirst($payment->payment_status)) }}</p>
+                        @else
+                            <p class="mb-0 text-danger">Pending</p>
+                        @endif
+                        @endhasanyrole
+                    </div>
+                    <div class="mb-0">
+                        <label class="text-muted small">Payment Method</label>
+                        <p class="mb-0 fw-semibold">{{ isset($payment) ? ucfirst($payment->payment_type) : '-' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Customer Card --}}
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="ri-user-3-line me-2"></i>Customer</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img src="{{ getSingleMedia($bookingdata->customer,'profile_image', null) }}"
+                            alt="Customer" class="rounded-circle"
+                            style="width: 50px; height: 50px; object-fit: cover;">
+                        <div>
+                            <h6 class="mb-0">{{ optional($bookingdata->customer)->display_name ?? '-' }}</h6>
+                        </div>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-center mb-2">
+                            <i class="ri-phone-line me-2 text-muted"></i>
+                            <a href="tel:{{ optional($bookingdata->customer)->contact_number }}" class="text-body">
+                                {{ optional($bookingdata->customer)->contact_number ?? '-' }}
+                            </a>
+                        </li>
+                        @if($bookingdata->phone_number)
+                        <li class="d-flex align-items-center mb-2">
+                            <i class="ri-smartphone-line me-2 text-muted"></i>
+                            <a href="tel:{{ $bookingdata->phone_number }}" class="text-body">
+                                {{ $bookingdata->phone_number }} <small class="text-muted">(Booking)</small>
+                            </a>
+                        </li>
+                        @endif
+                        @if($bookingdata->address)
+                        <li class="d-flex align-items-start mb-0">
+                            <i class="ri-map-pin-line me-2 text-muted mt-1"></i>
+                            <span class="text-wrap">{{ $bookingdata->address }}</span>
+                        </li>
+                        @endif
+                    </ul>
+                </div>
+            </div>
+
+            {{-- Cancellation Info --}}
+            @if($bookingdata->status === 'cancelled')
+            <div class="card mb-3 border-danger">
+                <div class="card-header bg-danger-subtle">
+                    <h5 class="mb-0 text-danger"><i class="ri-close-circle-line me-2"></i>Cancellation</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ $bookingdata->reason ?? 'No reason provided' }}</p>
+                    @if($bookingdata->service->is_enable_advance_payment == 1 && $bookingdata->advance_paid_amount > 0)
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Cancellation Charge ({{ $bookingdata->cancellation_charge }}%)</span>
+                            <strong>{{ getPriceFormat($bookingdata->cancellation_charge_amount) }}</strong>
+                        </div>
+                        @php $refundamount = $bookingdata->advance_paid_amount - $bookingdata->cancellation_charge_amount; @endphp
+                        @if($refundamount > 0)
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="text-muted">Refund Amount</span>
+                            <strong class="text-success">{{ getPriceFormat($refundamount) }}</strong>
+                        </div>
+                        @endif
+                    @endif
+                </div>
+            </div>
+            @endif
         </div>
     </div>
-    @endif  
 </div>
-
-
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script>
-        $(document).on('change', '.bookingstatus', function() {
-            var status = $(this).val();
-            var id = $(this).attr('data-id');
-
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: "{{ route('bookingStatus.update') }}",
-                data: {
-                    'status': status,
-                    'bookingId': id
-                },
-                success: function(data) {
-                    // Handle success response
-                }
-            });
+    $(document).on('change', '.bookingstatus', function() {
+        var status = $(this).val();
+        var id = $(this).attr('data-id');
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "{{ route('bookingStatus.update') }}",
+            data: { 'status': status, 'bookingId': id },
+            success: function(data) { window.location.reload(); }
         });
+    });
 
-        $(document).on('change', '.paymentStatus', function() {
-            var status = $(this).val();
-            var id = $(this).attr('data-id');
-
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: "{{ route('bookingStatus.update') }}",
-                data: {
-                    'status': status,
-                    'bookingId': id
-                },
-                success: function(data) {
-                    // Handle success response
-                }
-            });
+    $(document).on('change', '.paymentStatus', function() {
+        var status = $(this).val();
+        var id = $(this).attr('data-id');
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "{{ route('bookingStatus.update') }}",
+            data: { 'status': status, 'bookingId': id, 'type': 'payment' },
+            success: function(data) { window.location.reload(); }
         });
-
-        $(document).ready(function() {
-            $('#assign-provider').on('click', function() {
-                var bookingId = $(this).data('id');
-                var handymanIds = [];
-                handymanIds.push($(this).data('handyman-id'));
-
-                // SweetAlert confirmation
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "Do you want to assign this provider?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, assign it!',
-                    cancelButtonText: 'No, cancel'
-                }).then((willAssign) => {
-                    if (willAssign.isConfirmed) {
-                        $.ajax({
-                            url: '{{ route('booking.assigned') }}',
-                            type: 'POST',
-                            data: {
-                                id: bookingId,
-                                'handyman_id[]': handymanIds,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                Swal.fire("Success!", response.message, "success");
-                                window.location.reload();
-                            },
-                            error: function(xhr) {
-                                Swal.fire("Error!", xhr.responseText, "error");
-                            }
-                        });
-                    } else {
-                        Swal.fire("Assignment canceled!", "The provider was not assigned.", "info");
-                    }
-                });
-            });
-        });
-    </script>
+    });
+</script>
