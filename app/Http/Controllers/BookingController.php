@@ -239,17 +239,26 @@ class BookingController extends Controller
                     ->orderBy('providers.display_name', $order);
             })
             ->editColumn('status', function ($query) {
-                return bookingstatus(BookingStatus::bookingStatus($query->status));
+                $statuses = ['pending' => 'Pending', 'accept' => 'Accepted', 'completed' => 'Completed', 'cancelled' => 'Cancelled'];
+                $html = '<select class="form-select form-select-sm booking-status-dropdown" data-id="' . $query->id . '" style="min-width:120px;">';
+                foreach ($statuses as $val => $label) {
+                    $selected = $query->status == $val ? 'selected' : '';
+                    $html .= '<option value="' . $val . '" ' . $selected . '>' . $label . '</option>';
+                }
+                $html .= '</select>';
+                return $html;
             })
             ->editColumn('payment_id', function ($query) {
                 $payment = $query->payment()->orderBy('id', 'desc')->first();
-                $payment_status = $payment ? $payment->payment_status : null;
-                if ($payment_status !== null) {
-                    $status = '<span class="text-center text-white badge bg-primary">' . str_replace('_', " ", ucfirst($payment_status)) . '</span>';
-                } else {
-                    $status = '<span class="badge text-primary bg-primary-subtle">' . __('messages.pending') . '</span>';
+                $payment_status = $payment ? $payment->payment_status : 'pending';
+                $options = ['pending' => 'Pending', 'paid' => 'Paid'];
+                $html = '<select class="form-select form-select-sm payment-status-dropdown" data-id="' . $query->id . '" style="min-width:110px;">';
+                foreach ($options as $val => $label) {
+                    $selected = $payment_status == $val ? 'selected' : '';
+                    $html .= '<option value="' . $val . '" ' . $selected . '>' . $label . '</option>';
                 }
-                return $status;
+                $html .= '</select>';
+                return $html;
             })
             ->filterColumn('payment_id', function ($query, $keyword) {
                 $query->whereHas('payment', function ($q) use ($keyword) {
