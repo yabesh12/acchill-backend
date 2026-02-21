@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 
 class CartController extends Controller
 {
@@ -13,51 +12,70 @@ class CartController extends Controller
     {
         $pageTitle = 'User Carts';
         $auth_user = authSession();
-        return view('cart.index', compact('pageTitle', 'auth_user'));
-    }
 
-    public function index_data(Request $request)
-    {
-        $carts = Cart::with(['user', 'service'])
-            ->select('carts.*')
-            ->orderBy('carts.updated_at', 'desc');
+        // Get all carts grouped by user
+        $carts = Cart::with(['user', 'service', 'service.media'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        return DataTables::of($carts)
-            ->addColumn('user_name', function ($cart) {
-                $user = $cart->user;
-                return $user ? ($user->first_name . ' ' . $user->last_name . '<br><small class="text-muted">' . $user->email . '</small>') : '-';
-            })
-            ->addColumn('service_name', function ($cart) {
-                $service = $cart->service;
-                if (!$service) return '-';
-                $img = '';
-                $media = $service->getFirstMedia('service_attachment');
-                if ($media) {
-                    $img = '<img src="' . $media->getUrl() . '" class="rounded me-2" style="width:40px;height:40px;object-fit:cover">';
-                }
-                return $img . '<strong>' . e($service->name) . '</strong>';
-            })
-            ->addColumn('service_price', function ($cart) {
-                $service = $cart->service;
-                return $service ? getPriceFormat($service->price) : '-';
-            })
-            ->addColumn('total', function ($cart) {
+        $groupedCarts = $carts->groupBy('user_id')->map(function ($items, $userId) {
+            $user = $items->first()->user;
+            $cartTotal = 0;
+            $itemsData = $items->map(function ($cart) use (&$cartTotal) {
                 $service = $cart->service;
                 $price = $service ? $service->price : 0;
                 $discount = $service ? $service->discount : 0;
                 $effectivePrice = $discount > 0 ? $price - ($price * $discount / 100) : $price;
-                return '<strong class="text-primary">' . getPriceFormat($effectivePrice * $cart->quantity) . '</strong>';
-            })
-            ->addColumn('action', function ($cart) {
-                return '<button class="btn btn-sm btn-danger" onclick="deleteCart(' . $cart->id . ')"><i class="fas fa-trash"></i></button>';
-            })
-            ->rawColumns(['user_name', 'service_name', 'total', 'action'])
-            ->make(true);
+                $lineTotal = $effectivePrice * $cart->quantity;
+                $cartTotal += $lineTotal;
+                return (object)[
+                    'id' => $cart->id,
+                    'service' => $service,
+                    'quantity' => $cart->quantity,
+                    'price' => $price,
+                    'discount' => $discount,
+                    'effective_price' => $effectivePrice,
+                    'line_total' => $lineTotal,
+                    'updated_at' => $cart->updated_at,
+                ];
+            });
+            return (object)[
+                'user' => $user,
+                'items' => $itemsData,
+                'total' => $cartTotal,
+                'item_count' => $items->count(),
+            ];
+        })->sortByDesc('total');
+
+        return view('cart.index', compact('pageTitle', 'auth_user', 'groupedCarts'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $cart = Cart::findOrFail($id);
+        $qty = max(1, intval($request->input('quantity', 1)));
+        $cart->quantity = $qty;
+        $cart->save();
+
+        return response()->json([
+            'message' => 'Quantity updated',
+            'status' => true,
+            'quantity' => $qty,
+        ]);
     }
 
     public function destroy($id)
     {
-        Cart::findOrFail($id)->delete();
-        return response()->json(['message' => 'Cart item deleted', 'status' => true]);
+        $cart = Cart::findOrFail($id);
+        $userId = $cart->user_id;
+        $cart->delete();
+
+        $remaining = Cart::where('user_id', $userId)->count();
+
+        return response()->json([
+            'message' => 'Cart item deleted',
+            'status' => true,
+            'remaining' => $remaining,
+        ]);
     }
 }
