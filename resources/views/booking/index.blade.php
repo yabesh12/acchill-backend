@@ -81,6 +81,21 @@
 
                     </div>
 
+                    <div class="col-md-12 mb-3">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="fw-bold small text-muted me-1">Status:</span>
+                            <button class="btn btn-sm quick-filter-btn active" data-filter-type="booking" data-value="">All</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="pending">Pending</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="accept">Accepted</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="completed">Completed</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="cancelled">Cancelled</button>
+                            <span class="border-start ps-2 ms-1"></span>
+                            <span class="fw-bold small text-muted me-1">Payment:</span>
+                            <button class="btn btn-sm quick-filter-btn active" data-filter-type="payment" data-value="">All</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="payment" data-value="pending">Pending</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="payment" data-value="paid">Paid</button>
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table id="datatable" class="table table-striped border">
@@ -854,6 +869,60 @@ document.addEventListener("visibilitychange", function() {
         localStorage.removeItem("bookingStatusChanged");
         location.reload();
     }
+});
+</script>
+<style>
+.quick-filter-btn {
+    border: 1px solid #dee2e6;
+    background: #fff;
+    color: #6c757d;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.quick-filter-btn:hover {
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+}
+.quick-filter-btn.active {
+    background: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: #fff;
+}
+</style>
+<script>
+// Quick filter buttons
+var quickBookingStatus = '';
+var quickPaymentStatus = '';
+
+.on('click', '.quick-filter-btn', function() {
+    var filterType = .data('filter-type');
+    var value = .data('value');
+
+    // Toggle active state within same group
+    .siblings('[data-filter-type="' + filterType + '"]').removeClass('active');
+    .addClass('active');
+
+    if (filterType === 'booking') {
+        quickBookingStatus = value;
+        // Update selectedFilters
+        if (value) {
+            selectedFilters.booking_status = [value];
+        } else {
+            selectedFilters.booking_status = [];
+        }
+    } else if (filterType === 'payment') {
+        quickPaymentStatus = value;
+        if (value) {
+            selectedFilters.payment_status = [value];
+        } else {
+            selectedFilters.payment_status = [];
+        }
+    }
+
+    .DataTable().ajax.reload();
 });
 </script>
 </x-master-layout>
