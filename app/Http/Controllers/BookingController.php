@@ -219,9 +219,20 @@ class BookingController extends Controller
                 $sitesetup = Setting::where('type', 'site-setup')->where('key', 'site-setup')->first();
                 $datetime = $sitesetup ? json_decode($sitesetup->value) : null;
 
-                $date = optional($datetime)->date_format && optional($datetime)->time_format
-                    ? date(optional($datetime)->date_format, strtotime($query->date)) . '  ' . date(optional($datetime)->time_format, strtotime($query->date))
-                    : $query->date;
+                $date = optional($datetime)->date_format
+                    ? date(optional($datetime)->date_format, strtotime($query->date))
+                    : date('M d, Y', strtotime($query->date));
+
+                // Show booking slot time if available
+                if ($query->booking_slot) {
+                    $slotHour = (int) date('H', strtotime($query->booking_slot));
+                    $endHour = $slotHour + 1;
+                    $startLabel = $slotHour == 0 ? '12 AM' : ($slotHour < 12 ? $slotHour . ' AM' : ($slotHour == 12 ? '12 PM' : ($slotHour - 12) . ' PM'));
+                    $endLabel = $endHour == 0 ? '12 AM' : ($endHour < 12 ? $endHour . ' AM' : ($endHour == 12 ? '12 PM' : ($endHour - 12) . ' PM'));
+                    $date .= '<br><span class="badge bg-info text-white">' . $startLabel . ' - ' . $endLabel . '</span>';
+                } else {
+                    $date .= optional($datetime)->time_format ? '  ' . date(optional($datetime)->time_format, strtotime($query->date)) : '';
+                }
 
                 return $date;
             })
@@ -286,7 +297,7 @@ class BookingController extends Controller
                 }
             })
             ->addIndexColumn()
-            ->rawColumns(['action', 'status', 'payment_id', 'service_id', 'id'])
+            ->rawColumns(['action', 'status', 'payment_id', 'service_id', 'id', 'date'])
             ->toJson();
     }
 

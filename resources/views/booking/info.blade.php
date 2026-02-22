@@ -248,7 +248,16 @@ $addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="text-muted small">Booking Date</label>
-                        <p class="mb-0 fw-semibold">{{ date("$datetime->date_format $datetime->time_format", strtotime($bookingdata->date)) ?? '-' }}</p>
+                        <p class="mb-0 fw-semibold">{{ date("$datetime->date_format", strtotime($bookingdata->date)) ?? '-' }}</p>
+                        @if($bookingdata->booking_slot)
+                            @php
+                                $slotHour = (int) date('H', strtotime($bookingdata->booking_slot));
+                                $endHour = $slotHour + 1;
+                                $startLabel = $slotHour == 0 ? '12 AM' : ($slotHour < 12 ? $slotHour . ' AM' : ($slotHour == 12 ? '12 PM' : ($slotHour - 12) . ' PM'));
+                                $endLabel = $endHour == 0 ? '12 AM' : ($endHour < 12 ? $endHour . ' AM' : ($endHour == 12 ? '12 PM' : ($endHour - 12) . ' PM'));
+                            @endphp
+                            <span class="badge bg-info text-white mt-1">{{ $startLabel }} - {{ $endLabel }}</span>
+                        @endif
                     </div>
                     <div class="mb-3">
                         <label class="text-muted small">Placed On</label>
