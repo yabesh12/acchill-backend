@@ -87,6 +87,8 @@
                             <button class="btn btn-sm quick-filter-btn active" data-filter-type="booking" data-value="">All</button>
                             <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="pending">Pending</button>
                             <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="accept">Accepted</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="ongoing">On Going</button>
+                            <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="in_progress">In Progress</button>
                             <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="completed">Completed</button>
                             <button class="btn btn-sm quick-filter-btn" data-filter-type="booking" data-value="cancelled">Cancelled</button>
                             <span class="border-start ps-2 ms-1"></span>
@@ -894,27 +896,21 @@ document.addEventListener("visibilitychange", function() {
 </style>
 <script>
 // Quick filter buttons
-var quickBookingStatus = '';
-var quickPaymentStatus = '';
-
-.on('click', '.quick-filter-btn', function() {
-    var filterType = .data('filter-type');
-    var value = .data('value');
+$(document).on('click', '.quick-filter-btn', function() {
+    var filterType = $(this).data('filter-type');
+    var value = $(this).data('value');
 
     // Toggle active state within same group
-    .siblings('[data-filter-type="' + filterType + '"]').removeClass('active');
-    .addClass('active');
+    $(this).closest('.d-flex').find('[data-filter-type="' + filterType + '"]').removeClass('active');
+    $(this).addClass('active');
 
     if (filterType === 'booking') {
-        quickBookingStatus = value;
-        // Update selectedFilters
         if (value) {
             selectedFilters.booking_status = [value];
         } else {
             selectedFilters.booking_status = [];
         }
     } else if (filterType === 'payment') {
-        quickPaymentStatus = value;
         if (value) {
             selectedFilters.payment_status = [value];
         } else {
@@ -922,7 +918,8 @@ var quickPaymentStatus = '';
         }
     }
 
-    .DataTable().ajax.reload();
+    $('#datatable').DataTable().ajax.reload();
+    updateTotalEarnings();
 });
 </script>
 </x-master-layout>

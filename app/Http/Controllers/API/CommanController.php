@@ -403,4 +403,32 @@ class CommanController extends Controller
 
         return comman_custom_response($response);
     }
+
+    public function requestInvoice(Request $request)
+    {
+        $request->validate(['booking_id' => 'required|integer']);
+
+        $booking = \App\Models\Booking::with(['customer', 'service'])->findOrFail($request->booking_id);
+        $customer = $booking->customer;
+        $service = $booking->service;
+
+        $body = "Invoice Request for Booking #{$booking->id}\n\n";
+        $body .= "Customer Name: " . ($customer->display_name ?? $customer->first_name . ' ' . $customer->last_name) . "\n";
+        $body .= "Customer Email: " . ($customer->email ?? 'N/A') . "\n";
+        $body .= "Customer Phone: " . ($customer->contact_number ?? 'N/A') . "\n";
+        $body .= "Service: " . ($service->name ?? 'N/A') . "\n";
+        $body .= "Booking Date: " . ($booking->date ?? 'N/A') . "\n";
+        $body .= "Time Slot: " . ($booking->booking_slot ?? 'N/A') . "\n";
+        $body .= "Address: " . ($booking->address ?? 'N/A') . "\n";
+        $body .= "Total Amount: " . ($booking->total_amount ?? 'N/A') . "\n";
+        $body .= "Description: " . ($booking->description ?? 'N/A') . "\n";
+
+        \Illuminate\Support\Facades\Mail::raw($body, function ($message) use ($booking) {
+            $message->to('uxserve@gmail.com')
+                    ->subject('Invoice Request - Booking #' . $booking->id);
+        });
+
+        return response()->json(['message' => 'Invoice request sent successfully', 'status' => true]);
+    }
+
 }

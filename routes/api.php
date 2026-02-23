@@ -181,6 +181,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('delete-favourite-provider',[ API\ProviderFavouriteController::class, 'deleteFavouriteProvider' ]);
     Route::get('user-favourite-provider',[ API\ProviderFavouriteController::class, 'getUserFavouriteProvider' ]);
     Route::post('download-invoice',[API\CommanController::class,'downloadInvoice']);
+    Route::post('request-invoice',[API\CommanController::class,'requestInvoice']);
     Route::get('user-wallet-balance',[API\User\UserController::class,'userWalletBalance']);
     Route::get('get-recently-viewed',[App\Http\Controllers\FrontendSettingController::class,'recentlyViewedGet' ]);
 

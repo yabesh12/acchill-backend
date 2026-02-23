@@ -32,6 +32,7 @@ class ServiceRequest extends FormRequest
             'type'                           => 'required',
             'price'                          => 'required|min:0',
             'status'                         => 'required',  
+            'sort_order'                     => 'nullable|integer|min:0|unique:services,sort_order,'.$id,
         ];
     }
     public function messages()
@@ -51,6 +52,6 @@ class ServiceRequest extends FormRequest
             throw new HttpResponseException(response()->json($data,422));
         }
 
-        throw new HttpResponseException(redirect()->back()->withInput()->with('errors', $validator->errors()));
+        throw new HttpResponseException(redirect()->back()->withInput()->withErrors($validator->errors()));
     }
 }

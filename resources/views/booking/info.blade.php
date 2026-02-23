@@ -343,6 +343,18 @@ $addonTotalPrice = $bookingdata->bookingAddonService->count() > 0 ? $bookingdata
                 </div>
             </div>
 
+            
+            {{-- Booking Description --}}
+            @if(!empty($bookingdata->description))
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-0"><i class="ri-file-text-line me-2"></i>Description</h5>
+                    <hr class="my-2">
+                    <p class="mb-0">{{ $bookingdata->description }}</p>
+                </div>
+            </div>
+            @endif
+
             {{-- Cancellation Info --}}
             @if($bookingdata->status === 'cancelled')
             <div class="card mb-3 border-danger">

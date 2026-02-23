@@ -74,7 +74,7 @@ class DashboardController extends Controller
                 $a->where('status', 1)->where('is_subscribe',1);
             });
         }
-        $service = ServiceResource::collection($service->orderBy('id','desc')->paginate($per_page));
+        $service = ServiceResource::collection($service->orderBy('sort_order','asc')->orderBy('id','desc')->paginate($per_page));
 
         if ($request->has('latitude') && !empty($request->latitude) && $request->has('longitude') && !empty($request->longitude)) {
             $get_distance = getSettingKeyValue('site-setup','radious');
@@ -106,7 +106,7 @@ class DashboardController extends Controller
                 $a->where('status', 1)->where('is_subscribe',1);
             });
         }
-        $featured_service = ServiceResource::collection($featured_service->orderBy('id','desc')->paginate($per_page));
+        $featured_service = ServiceResource::collection($featured_service->orderBy('sort_order','asc')->orderBy('id','desc')->paginate($per_page));
 
         if ($request->has('latitude') && !empty($request->latitude) && $request->has('longitude') && !empty($request->longitude)) {
             $get_distance = getSettingKeyValue('site-setup','radious');
@@ -179,7 +179,7 @@ class DashboardController extends Controller
             });
         }
 
-        $service = ServiceResource::collection($service->orderBy('id','desc')->take(4)->get());
+        $service = ServiceResource::collection($service->orderBy('sort_order','asc')->orderBy('id','desc')->take(4)->get());
 
         $total_active_handyman = UserResource::collection(User::myUsers()->where('status', 1)->get());
 

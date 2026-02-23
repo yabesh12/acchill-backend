@@ -156,6 +156,11 @@
                         name: 'price',
                         title: "{{ __('messages.price') }}"
                     },
+                    {
+                        data: 'sort_order',
+                        name: 'sort_order',
+                        title: 'Sort Order',
+                    },
                     @if (!$postrequestid)
                         {
                             data: 'status',

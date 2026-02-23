@@ -119,7 +119,10 @@ class ServiceController extends Controller
             ->editColumn('discount' , function ($query){
                 return $query->discount ? $query->discount .'%' : '-';
             })
-            ->addColumn('action', function ($data) {
+            ->editColumn('sort_order', function($service) {
+                    return $service->sort_order ?? 0;
+                })
+                ->addColumn('action', function ($data) {
                 return view('service.action', compact('data'));
             })
             ->editColumn('status' , function ($query){

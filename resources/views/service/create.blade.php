@@ -54,14 +54,13 @@
                             </div>
 
                             @if(auth()->user()->hasAnyRole(['admin','demo_admin']))
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4" style="display:none;">
                                 {{ html()->label(__('messages.select_name',[ 'select' => __('messages.provider') ]).' <span class="text-danger">*</span>','name')->class('form-control-label') }}
                                 <br />
                                 {{ html()->select('provider_id', [ optional($servicedata->providers)->id => optional($servicedata->providers)->display_name], optional($servicedata->providers)->id)
                                     ->class('select2js form-group')
                                     ->id('provider_id')
                                     ->attribute('onchange', 'selectprovider(this)')
-                                    ->required()
                                     ->attribute('data-placeholder', __('messages.select_name', ['select' => __('messages.provider')]))
                                     ->attribute('data-ajax--url', route('ajax-list', ['type' => 'provider']))
                                 }}
@@ -114,6 +113,16 @@
                                 {{ html()->label(__('messages.status') . ' <span class="text-danger">*</span>', 'status')->class('form-control-label') }}
                                 {{ html()->select('status',['1' => __('messages.active'), '0' => __('messages.inactive')], $servicedata->status)->class('form-control select2js')->required()}}
                             </div>
+                    <div class="form-group col-md-4">
+                        <label class="form-label" for="sort_order">Sort Order</label>
+                        <input type="number" class="form-control" name="sort_order" id="sort_order"
+                               value="{{ old('sort_order', isset($servicedata) ? $servicedata->sort_order : 0) }}"
+                               min="0" placeholder="0">
+                        <small class="text-muted">Lower numbers appear first (must be unique)</small>
+                        @error('sort_order')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                             
                                 <div class="form-group col-md-4">
                                     {{ html()->label(__('messages.visit_type').' ', 'visit_type')->class('form-control-label') }}

@@ -16,7 +16,7 @@ class Service extends Model implements  HasMedia
     protected $fillable = [
         'name', 'category_id', 'provider_id' , 'type' , 'is_slot','discount' , 'duration' ,'description',
         'is_featured', 'status' , 'price' , 'added_by','subcategory_id','service_type','visit_type',
-        'is_enable_advance_payment','advance_payment_amount'
+        'is_enable_advance_payment','advance_payment_amount', 'sort_order'
     ];
 
     protected $casts = [
@@ -30,7 +30,8 @@ class Service extends Model implements  HasMedia
         'added_by'                  => 'integer',
         'is_slot'                   => 'integer',
         'is_enable_advance_payment' => 'integer',
-        'advance_payment_amount'    => 'double',
+        'advance_payment_amount' => 'double',
+        'sort_order' => 'integer',
     ];
 
     public function providers(){
@@ -128,7 +129,7 @@ class Service extends Model implements  HasMedia
     }
     public function scopeList($query)
     {
-        return $query->orderByRaw('deleted_at IS NULL DESC, deleted_at DESC')->orderBy('created_at', 'desc');
+        return $query->orderByRaw('deleted_at IS NULL DESC, deleted_at DESC')->orderBy('sort_order', 'asc')->orderBy('created_at', 'desc');
     }
     public function servicePackage(){
         return $this->hasMany(PackageServiceMapping::class, 'service_id','id');

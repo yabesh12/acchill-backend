@@ -29,7 +29,7 @@ class ServiceController extends Controller
 {
     public function getServiceList(Request $request){
 
-        $service = Service::where('service_type','service')->with(['providers','category','serviceRating'])->orderBy('created_at','desc');
+        $service = Service::where('service_type','service')->with(['providers','category','serviceRating'])->orderBy('sort_order','asc')->orderBy('created_at','desc');
         $category = Category::onlyTrashed()->get();
         $category = $category->pluck('id');
         $service = $service->whereNotIn('category_id',$category);
@@ -136,11 +136,11 @@ class ServiceController extends Controller
 
         if(auth()->user() !== null && auth()->user()->hasRole('admin')){
 
-            $service = $service->orderBy('created_at','desc');
+            $service = $service->orderBy('sort_order','asc')->orderBy('created_at','desc');
            
         }else{
 
-            $service = $service->where('status',1)->orderBy('created_at','desc');
+            $service = $service->where('status',1)->orderBy('sort_order','asc')->orderBy('created_at','desc');
 
         }
 
